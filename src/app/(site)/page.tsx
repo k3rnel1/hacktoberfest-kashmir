@@ -33,8 +33,8 @@ const steps = [
   },
   {
     icon: UsersRound,
-    title: "Hack together",
-    body: `Teams of up to ${eventConfig.team.maxMembers} `,
+    title: "Await Selection Updates",
+    body: `Monitor your registered email for updates from the organizers regarding your selection status. ${eventConfig.team.maxMembers} `,
   },
 ];
 

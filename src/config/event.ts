@@ -7,21 +7,22 @@ export const eventConfig = {
     "A one-day, in-person hackathon bringing Kashmir’s developers, students, designers, and tech enthusiasts together to build with open-source AI and open-weight models. Turn ideas into working projects, experiment with emerging technologies, collaborate with fellow builders, and compete for the Best Open-Source AI Project award.",
   date: "Tuesday, 27th October 2026",
   venue: "Islamia College, Hawal, Srinagar, Jammu & Kashmir",
-  registrationDeadline: "Sunday, 26th October 2026",
-  contactEmail: "khandayadnan59@gmail.com",
+  registrationDeadline: "Sunday, 25th October 2026",
+  contactEmail: "alizubairsh@gmail.com",
+  contactLabel: "Support",
   socials: {
     github: null as string | null,
     instagram: null as string | null,
   },
   team: {
     // Keep in sync with the default in supabase/migrations (teams.max_members).
-    maxMembers: 5,
+    maxMembers: 3,
     minDescriptionLength: 10,
     maxDescriptionLength: 300,
     minNameLength: 3,
     maxNameLength: 40,
   },
-  appUrl: process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
+  appUrl: process.env.NEXT_PUBLIC_SITE_URL ?? "hacktoberfest-kashmir.vercel.app",
 } as const;
 
 export const TBA = "To be announced";
