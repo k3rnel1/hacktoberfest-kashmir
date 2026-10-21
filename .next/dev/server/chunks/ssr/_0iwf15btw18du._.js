@@ -195,25 +195,25 @@ __turbopack_context__.s([
 ]);
 const eventConfig = {
     name: "Hacktoberfest Kashmir",
-    tagline: "Open source, built together.",
-    description: "A community event for developers in Kashmir to learn, collaborate and contribute to open source in teams.",
-    date: null,
-    venue: null,
-    registrationDeadline: null,
-    contactEmail: null,
+    tagline: "Bring your ideas. Build something real. Shape what’s next.",
+    description: "A one-day, in-person hackathon bringing Kashmir’s developers, students, designers, and tech enthusiasts together to build with open-source AI and open-weight models. Turn ideas into working projects, experiment with emerging technologies, collaborate with fellow builders, and compete for the Best Open-Source AI Project award.",
+    date: "Tuesday, 27th October 2026",
+    venue: "Islamia College, Hawal, Srinagar, Jammu & Kashmir",
+    registrationDeadline: "Sunday, 26th October 2026",
+    contactEmail: "khandayadnan59@gmail.com",
     socials: {
         github: null,
         instagram: null
     },
     team: {
         // Keep in sync with the default in supabase/migrations (teams.max_members).
-        maxMembers: 4,
+        maxMembers: 5,
         minDescriptionLength: 10,
         maxDescriptionLength: 300,
         minNameLength: 3,
         maxNameLength: 40
     },
-    appUrl: process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"
+    appUrl: ("TURBOPACK compile-time value", "http://localhost:3000") ?? "http://localhost:3000"
 };
 const TBA = "To be announced";
 }),

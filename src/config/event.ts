@@ -8,7 +8,7 @@ export const eventConfig = {
   date: "Tuesday, 27th October 2026",
   venue: "Islamia College, Hawal, Srinagar, Jammu & Kashmir",
   registrationDeadline: "Sunday, 26th October 2026",
-  contactEmail: "Support:" ,"alizubairsh@gmail.com",
+  contactEmail: "khandayadnan59@gmail.com",
   socials: {
     github: null as string | null,
     instagram: null as string | null,

@@ -1,6 +1,6 @@
 {
   "app": {
-    "[project]/src/app/_not-found/page": [
+    "[project]/src/app/(site)/page": [
       "static/media/Geist_Variable-s.p.142kz3f7gseln.woff2",
       "static/media/GeistMono_Variable.p.074yowjdp83r3.woff2"
     ]

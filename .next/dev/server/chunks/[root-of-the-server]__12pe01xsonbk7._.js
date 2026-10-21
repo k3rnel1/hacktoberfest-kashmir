@@ -126,7 +126,7 @@ async function proxy(request) {
     let response = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$middleware$5d$__$28$ecmascript$29$__["NextResponse"].next({
         request
     });
-    const supabase = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$supabase$2f$ssr$2f$dist$2f$module$2f$createServerClient$2e$js__$5b$middleware$5d$__$28$ecmascript$29$__["createServerClient"])(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY, {
+    const supabase = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$supabase$2f$ssr$2f$dist$2f$module$2f$createServerClient$2e$js__$5b$middleware$5d$__$28$ecmascript$29$__["createServerClient"])(("TURBOPACK compile-time value", "https://edjvgpgaygdkjpixohkt.supabase.co"), ("TURBOPACK compile-time value", "sb_publishable_46NU1RXn_wsSurn_ERg8BA_DSuv3hIZ") ?? process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY, {
         cookies: {
             getAll: ()=>request.cookies.getAll(),
             setAll (list) {
