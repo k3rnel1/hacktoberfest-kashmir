@@ -2,20 +2,20 @@
 // until the organizers provide the real values. Do not invent details here.
 export const eventConfig = {
   name: "Hacktoberfest Kashmir",
-  tagline: "Open source, built together.",
+  tagline: "Bring your ideas. Build something real. Shape what’s next.",
   description:
-    "A community event for developers in Kashmir to learn, collaborate and contribute to open source in teams.",
-  date: null as string | null,
-  venue: null as string | null,
-  registrationDeadline: null as string | null,
-  contactEmail: null as string | null,
+    "A one-day, in-person hackathon bringing Kashmir’s developers, students, designers, and tech enthusiasts together to build with open-source AI and open-weight models. Turn ideas into working projects, experiment with emerging technologies, collaborate with fellow builders, and compete for the Best Open-Source AI Project award.",
+  date: "Tuesday, 27th October 2026",
+  venue: "Islamia College, Hawal, Srinagar, Jammu & Kashmir",
+  registrationDeadline: "Sunday, 26th October 2026",
+  contactEmail: "alizubairsh@gmail.com",
   socials: {
     github: null as string | null,
     instagram: null as string | null,
   },
   team: {
     // Keep in sync with the default in supabase/migrations (teams.max_members).
-    maxMembers: 4,
+    maxMembers: 5,
     minDescriptionLength: 10,
     maxDescriptionLength: 300,
     minNameLength: 3,
