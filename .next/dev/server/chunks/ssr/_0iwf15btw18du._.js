@@ -185,18 +185,17 @@ function RootLayout({ children }) {
 "[project]/src/config/event.ts [app-rsc] (ecmascript)", ((__turbopack_context__) => {
 "use strict";
 
-// Central event configuration. Fields set to null are shown as "To be announced"
-// until the organizers provide the real values. Do not invent details here.
 __turbopack_context__.s([
     "TBA",
     ()=>TBA,
     "eventConfig",
     ()=>eventConfig
 ]);
+const TBA = "To be announced";
 const eventConfig = {
     name: "Hacktoberfest Kashmir",
     tagline: "Bring your ideas. Build something real. Shape what’s next.",
-    description: "A one-day, in-person hackathon bringing Kashmir’s developers, students, designers, and tech enthusiasts together to build with open-source AI and open-weight models. Turn ideas into working projects, experiment with emerging technologies, collaborate with fellow builders, and compete for the Best Open-Source AI Project award.",
+    description: "A one-day, in-person hackathon bringing Kashmir’s developers, students, designers, and tech enthusiasts together to build with open-source AI.",
     date: "Tuesday, 27th October 2026",
     venue: "Islamia College, Hawal, Srinagar, Jammu & Kashmir",
     registrationDeadline: "Sunday, 25th October 2026",
@@ -207,16 +206,16 @@ const eventConfig = {
         instagram: null
     },
     team: {
-        // Keep in sync with the default in supabase/migrations (teams.max_members).
+        minMembers: 1,
         maxMembers: 3,
-        minDescriptionLength: 10,
-        maxDescriptionLength: 300,
-        minNameLength: 3,
-        maxNameLength: 40
+        maxTeams: 10,
+        maxUsers: 300,
+        minTeamSize: 3,
+        maxTeamSize: 40
     },
-    appUrl: ("TURBOPACK compile-time value", "http://localhost:3000") ?? "hacktoberfest-kashmir.vercel.app"
+    appUrl: ("TURBOPACK compile-time value", "http://localhost:3000") ?? "https://hacktoberfest-kashmir.vercel.app"
 };
-const TBA = "To be announced";
+;
 }),
 ]})(),
 "[project]/node_modules/geist/dist/geistmono_157ca88a.module.css [app-rsc] (css module)", ((__turbopack_context__) => {
