@@ -22,7 +22,7 @@ export const eventConfig = {
     minNameLength: 3,
     maxNameLength: 40,
   },
-  appUrl: process.env.NEXT_PUBLIC_SITE_URL ?? "hacktoberfest-kashmir.vercel.app",
+  appUrl: process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
 } as const;
 
 export const TBA = "To be announced";
