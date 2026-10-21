@@ -34,7 +34,7 @@ const steps = [
   {
     icon: UsersRound,
     title: "Hack together",
-    body: `Teams of up to ${eventConfig.team.maxMembers} contribute to open source side by side.`,
+    body: `Teams of up to ${eventConfig.team.maxMembers} `,
   },
 ];
 
@@ -53,7 +53,7 @@ export default async function HomePage() {
       <section className="relative isolate overflow-hidden rounded-2xl border border-border px-6 py-16 sm:px-12 sm:py-24">
         <div className="grid-bg absolute inset-0 -z-10" aria-hidden />
         <Badge variant="primary" className="mb-6 font-mono">
-          <span className="size-1.5 rounded-full bg-primary" aria-hidden /> Open source · Team event
+          <span className="size-1.5 rounded-full bg-primary" aria-hidden /> In Collaboration with BUILDFEST KASHMIR
         </Badge>
         <h1 className="max-w-3xl text-4xl font-semibold tracking-tight sm:text-6xl">
           {eventConfig.name}

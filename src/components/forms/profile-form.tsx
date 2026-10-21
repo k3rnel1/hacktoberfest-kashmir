@@ -44,7 +44,7 @@ export function ProfileForm({
         type="tel"
         inputMode="tel"
         autoComplete="tel"
-        placeholder="9876543210"
+        placeholder="9419XXXXXX"
         defaultValue={defaults.mobileNumber}
         required
         hint="Only visible to event organizers."
@@ -73,11 +73,11 @@ export function ProfileForm({
         error={errors.githubUsername}
       />
       <TextField
-        label="LinkedIn username or profile URL"
+        label="LinkedIn profile URL"
         name="linkedinUrl"
         autoCapitalize="none"
         spellCheck={false}
-        placeholder="linkedin.com/in/your-name"
+        placeholder="linkedin.com/in/your-name-code"
         defaultValue={defaults.linkedinUrl}
         required
         hint="Shown to your teammates."
