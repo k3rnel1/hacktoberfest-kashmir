@@ -20,6 +20,7 @@ name: "Hacktoberfest Kashmir",
   socials: {
     github: null as string | null,
     instagram: null as string | null,
+    linkedin: null as string | null,
   },
   team: {
     // Keep in sync with the default in supabase/migrations (teams.max_members).

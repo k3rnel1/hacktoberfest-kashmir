@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
+import { unstable_rethrow, useRouter } from "next/navigation";
 import { Link2Off, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
 import { revokeInviteAction, rotateInviteAction } from "@/actions/teams";
@@ -45,7 +45,10 @@ export function InviteManager({
         setIsRevoked(false);
         toast.success(result.message ?? "New invitation link created.");
         router.refresh();
-      } catch {
+      } catch (error) {
+        // A server action that calls redirect() rejects with a redirect signal. Let
+        // Next handle the navigation instead of showing an error message.
+        unstable_rethrow(error);
         toast.error(GENERIC_ERROR);
       }
     });

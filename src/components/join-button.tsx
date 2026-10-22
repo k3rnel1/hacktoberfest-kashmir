@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { unstable_rethrow } from "next/navigation";
 import { joinTeamAction } from "@/actions/teams";
 import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/alert";
@@ -16,7 +17,10 @@ export function JoinButton({ token }: { token: string }) {
       try {
         const result = await joinTeamAction(token);
         if (result && !result.ok) setError(result.error);
-      } catch {
+      } catch (error) {
+        // A server action that calls redirect() rejects with a redirect signal. Let
+        // Next handle the navigation instead of showing an error message.
+        unstable_rethrow(error);
         setError(GENERIC_ERROR);
       }
     });

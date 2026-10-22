@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition, type FormEvent } from "react";
+import { unstable_rethrow } from "next/navigation";
 import { toast } from "sonner";
 import type { z } from "zod";
 import { formToObject, GENERIC_ERROR, type ActionResult } from "@/lib/action";
@@ -37,7 +38,10 @@ export function useActionForm(
         } else if (result?.ok && result.message) {
           toast.success(result.message);
         }
-      } catch {
+      } catch (error) {
+        // A server action that calls redirect() rejects with a redirect signal. Let
+        // Next handle the navigation instead of showing an error message.
+        unstable_rethrow(error);
         setFormError(GENERIC_ERROR);
       }
     });

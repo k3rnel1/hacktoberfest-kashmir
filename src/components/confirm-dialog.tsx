@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
+import { unstable_rethrow, useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
@@ -48,7 +48,10 @@ export function ConfirmDialog({
         if (result?.ok && result.message) toast.success(result.message);
         setOpen(false);
         router.refresh();
-      } catch {
+      } catch (error) {
+        // A server action that calls redirect() rejects with a redirect signal. Let
+        // Next handle the navigation instead of showing an error message.
+        unstable_rethrow(error);
         toast.error(GENERIC_ERROR);
       }
     });
