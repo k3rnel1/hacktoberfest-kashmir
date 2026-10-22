@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, CheckCircle2, Circle, Link2, Plus } from "lucide-react";
 import { PasteInvite } from "@/components/paste-invite";
-import { SelectionStatusCard } from "@/components/selection-status";
+import { SelectionBadge, SelectionStatusCard } from "@/components/selection-status";
 import { MemberList } from "@/components/team/member-list";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -22,6 +22,12 @@ export default async function DashboardPage() {
     { label: "Account created", done: true },
     { label: "Profile completed", done: profile.profile_completed },
     { label: "Joined a team", done: Boolean(team) },
+    {
+      label: "Selection status",
+      // Complete only once the team has been selected; the badge shows where it stands.
+      done: team?.selection_status === "selected",
+      badge: team ? <SelectionBadge status={team.selection_status} /> : null,
+    },
   ];
   const doneCount = steps.filter((s) => s.done).length;
   const leader = team?.members.find((m) => m.role === "leader");
@@ -63,7 +69,7 @@ export default async function DashboardPage() {
           </div>
         </CardHeader>
         <CardContent>
-          <ul className="grid gap-2 text-sm sm:grid-cols-3">
+          <ul className="grid gap-2 text-sm sm:grid-cols-2 lg:grid-cols-4">
             {steps.map((step) => (
               <li key={step.label} className="flex items-center gap-2">
                 {step.done ? (
@@ -72,6 +78,7 @@ export default async function DashboardPage() {
                   <Circle className="size-4 text-muted" aria-hidden />
                 )}
                 <span className={step.done ? "" : "text-muted"}>{step.label}</span>
+                {step.badge}
               </li>
             ))}
           </ul>
