@@ -200,11 +200,12 @@ const eventConfig = {
     date: "Tuesday, 27th October 2026",
     venue: "Islamia College, Hawal, Srinagar, Jammu & Kashmir",
     registrationDeadline: "Sunday, 25th October 2026",
-    contactEmail: "alizubairsh@gmail.com",
+    Contact: "alizubairsh@gmail.com",
     contactLabel: "Support",
     socials: {
         github: null,
-        instagram: null
+        instagram: null,
+        linkedin: "https://www.linkedin.com/in/ali-zubair-shah-5640033a1"
     },
     team: {
         // Keep in sync with the default in supabase/migrations (teams.max_members).
