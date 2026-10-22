@@ -1,42 +1,6 @@
 {
   "app": {
-    "[project]/src/app/(site)/create-team/page": [
-      "static/media/Geist_Variable-s.p.142kz3f7gseln.woff2",
-      "static/media/GeistMono_Variable.p.074yowjdp83r3.woff2"
-    ],
-    "[project]/src/app/(site)/dashboard/page": [
-      "static/media/Geist_Variable-s.p.142kz3f7gseln.woff2",
-      "static/media/GeistMono_Variable.p.074yowjdp83r3.woff2"
-    ],
-    "[project]/src/app/(site)/login/page": [
-      "static/media/Geist_Variable-s.p.142kz3f7gseln.woff2",
-      "static/media/GeistMono_Variable.p.074yowjdp83r3.woff2"
-    ],
     "[project]/src/app/(site)/page": [
-      "static/media/Geist_Variable-s.p.142kz3f7gseln.woff2",
-      "static/media/GeistMono_Variable.p.074yowjdp83r3.woff2"
-    ],
-    "[project]/src/app/(site)/settings/profile/page": [
-      "static/media/Geist_Variable-s.p.142kz3f7gseln.woff2",
-      "static/media/GeistMono_Variable.p.074yowjdp83r3.woff2"
-    ],
-    "[project]/src/app/(site)/team/[id]/page": [
-      "static/media/Geist_Variable-s.p.142kz3f7gseln.woff2",
-      "static/media/GeistMono_Variable.p.074yowjdp83r3.woff2"
-    ],
-    "[project]/src/app/admin/(panel)/page": [
-      "static/media/Geist_Variable-s.p.142kz3f7gseln.woff2",
-      "static/media/GeistMono_Variable.p.074yowjdp83r3.woff2"
-    ],
-    "[project]/src/app/admin/(panel)/teams/page": [
-      "static/media/Geist_Variable-s.p.142kz3f7gseln.woff2",
-      "static/media/GeistMono_Variable.p.074yowjdp83r3.woff2"
-    ],
-    "[project]/src/app/admin/(panel)/users/page": [
-      "static/media/Geist_Variable-s.p.142kz3f7gseln.woff2",
-      "static/media/GeistMono_Variable.p.074yowjdp83r3.woff2"
-    ],
-    "[project]/src/app/admin/login/page": [
       "static/media/Geist_Variable-s.p.142kz3f7gseln.woff2",
       "static/media/GeistMono_Variable.p.074yowjdp83r3.woff2"
     ]

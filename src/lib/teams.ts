@@ -1,4 +1,5 @@
 import "server-only";
+import type { SelectionStatus } from "@/lib/selection";
 import { createClient } from "@/lib/supabase/server";
 
 export type TeamMember = {
@@ -17,6 +18,8 @@ export type TeamDetail = {
   leader_id: string;
   max_members: number;
   created_at: string;
+  selection_status: SelectionStatus;
+  selection_status_updated_at: string | null;
   members: TeamMember[];
 };
 

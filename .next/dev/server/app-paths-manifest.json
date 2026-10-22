@@ -1,12 +1,3 @@
 {
-  "/(site)/create-team/page": "app/(site)/create-team/page.js",
-  "/(site)/dashboard/page": "app/(site)/dashboard/page.js",
-  "/(site)/login/page": "app/(site)/login/page.js",
-  "/(site)/page": "app/(site)/page.js",
-  "/(site)/settings/profile/page": "app/(site)/settings/profile/page.js",
-  "/(site)/team/[id]/page": "app/(site)/team/[id]/page.js",
-  "/admin/(panel)/page": "app/admin/(panel)/page.js",
-  "/admin/(panel)/teams/page": "app/admin/(panel)/teams/page.js",
-  "/admin/(panel)/users/page": "app/admin/(panel)/users/page.js",
-  "/admin/login/page": "app/admin/login/page.js"
+  "/(site)/page": "app/(site)/page.js"
 }

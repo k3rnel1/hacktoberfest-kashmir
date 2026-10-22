@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Link2Off } from "lucide-react";
-import { Pagination, SearchBar, SortHeader } from "@/components/admin/list-controls";
+import { Pagination, SearchBar, SelectFilter, SortHeader } from "@/components/admin/list-controls";
+import { SelectionBadge } from "@/components/selection-status";
 import { Badge } from "@/components/ui/badge";
 import { Table, TBody, TD, TH, THead } from "@/components/ui/table";
-import { listTeams, parseListParams, TEAM_SORTS } from "@/lib/admin-data";
+import { listTeams, parseListParams, parseTeamStatusFilter, TEAM_SORTS } from "@/lib/admin-data";
+import { SELECTION_LABELS, SELECTION_STATUSES } from "@/lib/selection";
 import { formatDate } from "@/lib/utils";
 
 export const metadata: Metadata = { title: "Teams · Admin" };
@@ -16,11 +18,12 @@ export default async function AdminTeamsPage({
 }) {
   const sp = await searchParams;
   const params = parseListParams(sp, TEAM_SORTS, "created_at");
-  const { rows, total, members } = await listTeams(params);
+  const status = parseTeamStatusFilter(sp);
+  const { rows, total, members } = await listTeams(params, status);
 
   const path = "/admin/teams";
-  const query = { q: params.q, sort: params.sort, dir: params.dir };
-  const sortProps = { path, sort: params.sort, dir: params.dir, query: { q: params.q } };
+  const query = { q: params.q, sort: params.sort, dir: params.dir, status };
+  const sortProps = { path, sort: params.sort, dir: params.dir, query: { q: params.q, status } };
 
   return (
     <div className="grid gap-5">
@@ -34,7 +37,17 @@ export default async function AdminTeamsPage({
         q={params.q}
         placeholder="Search by team, leader name, username or team ID"
         hidden={{ sort: params.sort, dir: params.dir }}
-      />
+      >
+        <SelectFilter
+          name="status"
+          label="Selection"
+          value={status}
+          options={[
+            { value: "all", label: "All" },
+            ...SELECTION_STATUSES.map((s) => ({ value: s, label: SELECTION_LABELS[s] })),
+          ]}
+        />
+      </SearchBar>
 
       {rows.length === 0 ? (
         <div className="rounded-lg border border-dashed border-border p-10 text-center text-sm text-muted">
@@ -46,6 +59,9 @@ export default async function AdminTeamsPage({
             <tr>
               <TH>
                 <SortHeader {...sortProps} label="Team" column="name" />
+              </TH>
+              <TH>
+                <SortHeader {...sortProps} label="Selection" column="selection_status" />
               </TH>
               <TH>Description</TH>
               <TH>
@@ -74,6 +90,9 @@ export default async function AdminTeamsPage({
                       <Link2Off className="size-3" aria-hidden /> invite revoked
                     </Badge>
                   )}
+                </TD>
+                <TD>
+                  <SelectionBadge status={team.selection_status} />
                 </TD>
                 <TD className="max-w-64 text-muted">
                   <span className="line-clamp-2">{team.description}</span>

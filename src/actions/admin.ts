@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { dbError, fail, GENERIC_ERROR, SESSION_EXPIRED, type ActionResult } from "@/lib/action";
 import { getActionAdmin, isAdmin } from "@/lib/auth";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { selectionLabel, selectionStatusSchema } from "@/lib/selection";
 import { uuidSchema } from "@/lib/validation";
 
 // Every action re-verifies the caller is an administrator on the server. The UI
@@ -57,6 +58,31 @@ export async function adminDissolveTeamAction(teamId: string): Promise<ActionRes
 
   revalidatePath("/admin", "layout");
   return { ok: true, message: "Team dissolved." };
+}
+
+export async function adminSetTeamStatusAction(
+  teamId: string,
+  status: string,
+): Promise<ActionResult> {
+  const g = await guard(teamId);
+  if (!g.ok) return g.result;
+
+  const parsed = selectionStatusSchema.safeParse(status);
+  if (!parsed.success) return fail(dbError("INVALID_STATUS"));
+
+  const { error } = await createAdminClient().rpc("admin_set_team_status", {
+    p_admin_id: g.adminId,
+    p_team_id: teamId,
+    p_status: parsed.data,
+  });
+  if (error) return fail(dbError(error.message));
+
+  revalidatePath("/admin", "layout");
+  // Participants read the status on every request (dynamic pages), but revalidate
+  // their routes too in case a cache is introduced later.
+  revalidatePath("/dashboard");
+  revalidatePath(`/team/${teamId}`);
+  return { ok: true, message: `Status set to ${selectionLabel(parsed.data)}.` };
 }
 
 function temporaryPassword() {

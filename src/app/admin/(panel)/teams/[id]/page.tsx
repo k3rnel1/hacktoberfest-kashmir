@@ -7,6 +7,8 @@ import {
   RemoveMemberButton,
   RevokeInviteButton,
 } from "@/components/admin/admin-actions";
+import { SelectionStatusControl } from "@/components/admin/selection-status-control";
+import { SelectionBadge } from "@/components/selection-status";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Table, TBody, TD, TH, THead } from "@/components/ui/table";
@@ -41,6 +43,26 @@ export default async function AdminTeamPage({ params }: { params: Promise<{ id: 
           <DissolveTeamButton teamId={team.id} name={team.name} redirectTo="/admin/teams" />
         </div>
       </div>
+
+      <Card className="grid gap-3 p-4">
+        <div className="flex flex-wrap items-center gap-2">
+          <h2 className="text-sm font-medium text-muted">Selection status</h2>
+          <SelectionBadge status={team.selection_status} />
+        </div>
+        <SelectionStatusControl
+          key={team.selection_status}
+          teamId={team.id}
+          current={team.selection_status}
+        />
+        <p className="text-xs text-muted">
+          {team.selection_status_updated_at
+            ? `Last changed ${formatDate(team.selection_status_updated_at)}${
+                team.selection_status_updated_by ? ` by @${team.selection_status_updated_by}` : ""
+              }.`
+            : "Not changed yet (default status)."}{" "}
+          Participants see this on their dashboard.
+        </p>
+      </Card>
 
       <div className="grid gap-3 sm:grid-cols-3">
         <Card className="p-4">

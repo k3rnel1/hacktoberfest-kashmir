@@ -1,4 +1,5 @@
 import "server-only";
+import { parseSelectionFilter, type SelectionStatus } from "@/lib/selection";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 // These helpers use the service-role client and return private participant data.
@@ -28,6 +29,9 @@ export type AdminUserRow = {
   team_id: string | null;
   team_name: string | null;
   team_role: "leader" | "member" | null;
+  selection_status: SelectionStatus | null;
+  selection_status_updated_at: string | null;
+  selection_status_updated_by: string | null;
   total_count: number;
 };
 
@@ -42,6 +46,8 @@ export type AdminTeamRow = {
   max_members: number;
   invite_revoked: boolean;
   created_at: string;
+  selection_status: SelectionStatus;
+  selection_status_updated_at: string | null;
   total_count: number;
 };
 
@@ -54,6 +60,9 @@ export type AdminTeamDetail = {
   invite_revoked: boolean;
   invite_expires_at: string | null;
   created_at: string;
+  selection_status: SelectionStatus;
+  selection_status_updated_at: string | null;
+  selection_status_updated_by: string | null;
   members: {
     user_id: string;
     role: "leader" | "member";
@@ -109,7 +118,7 @@ export function parseUserFilters(sp: SP): UserFilters {
 }
 
 export const USER_SORTS = ["created_at", "username", "full_name", "gmail", "team_name", "team_role", "profile_completed"] as const;
-export const TEAM_SORTS = ["created_at", "name", "leader_name", "member_count"] as const;
+export const TEAM_SORTS = ["created_at", "name", "leader_name", "member_count", "selection_status"] as const;
 
 export async function getStats(): Promise<AdminStats> {
   const { data, error } = await createAdminClient().rpc("admin_stats");
@@ -140,13 +149,18 @@ export async function listUsers(
   return { rows, total: Number(rows[0]?.total_count ?? 0) };
 }
 
-export async function listTeams(params: ListParams) {
+export function parseTeamStatusFilter(sp: SP) {
+  return parseSelectionFilter(first(sp.status));
+}
+
+export async function listTeams(params: ListParams, status: SelectionStatus | "all" = "all") {
   const { data, error } = await createAdminClient().rpc("admin_list_teams", {
     p_q: params.q || null,
     p_sort: params.sort,
     p_dir: params.dir,
     p_limit: PAGE_SIZE,
     p_offset: (params.page - 1) * PAGE_SIZE,
+    p_status: status,
   });
   if (error) throw new Error("Failed to load teams");
   const rows = (data ?? []) as AdminTeamRow[];

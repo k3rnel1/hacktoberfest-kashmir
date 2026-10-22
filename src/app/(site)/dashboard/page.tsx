@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, CheckCircle2, Circle, Link2, Plus } from "lucide-react";
 import { PasteInvite } from "@/components/paste-invite";
+import { SelectionStatusCard } from "@/components/selection-status";
 import { MemberList } from "@/components/team/member-list";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -93,6 +94,7 @@ export default async function DashboardPage() {
             </div>
           </CardHeader>
           <CardContent className="grid gap-4">
+            <SelectionStatusCard status={team.selection_status} />
             <p className="text-sm text-muted">{team.description}</p>
             <MemberList members={team.members} currentUserId={user.id} />
             <Button asChild className="w-fit">

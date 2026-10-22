@@ -96,5 +96,31 @@ select public.admin_dissolve_team('00000000-0000-0000-0000-0000000000ff','111111
 select pg_temp.assert((select count(*) from public.teams)=0,'dissolved');
 select pg_temp.assert((select count(*) from public.admin_audit_logs)=1,'audit entries written');
 
+-- Team selection status --------------------------------------------------------
+select public.create_team('00000000-0000-0000-0000-00000000000b','22222222-2222-2222-2222-222222222222','Team Two','A description here','hash3',4,null);
+select pg_temp.assert((select selection_status from public.teams)='in_process','new teams default to in_process');
+select pg_temp.assert((select selection_status_updated_at is null from public.teams),'no status metadata before first change');
+select pg_temp.assert(pg_temp.raises($$select public.admin_set_team_status('00000000-0000-0000-0000-0000000000ff','22222222-2222-2222-2222-222222222222','maybe')$$,'INVALID_STATUS'),'invalid status rejected');
+select pg_temp.assert(pg_temp.raises($$select public.admin_set_team_status('00000000-0000-0000-0000-0000000000ff','99999999-9999-9999-9999-999999999999','selected')$$,'TEAM_NOT_FOUND'),'unknown team rejected');
+select pg_temp.assert(pg_temp.raises($$update public.teams set selection_status='bogus'$$,'new row for relation'),'check constraint blocks bad values');
+select public.admin_set_team_status('00000000-0000-0000-0000-0000000000ff','22222222-2222-2222-2222-222222222222','selected');
+select pg_temp.assert((select selection_status='selected' and selection_status_updated_by='00000000-0000-0000-0000-0000000000ff' and selection_status_updated_at is not null from public.teams),'status + metadata recorded');
+select pg_temp.assert((select count(*) from public.admin_audit_logs where action='set_team_status' and metadata=jsonb_build_object('from','in_process','to','selected'))=1,'status change audited');
+select public.admin_set_team_status('00000000-0000-0000-0000-0000000000ff','22222222-2222-2222-2222-222222222222','selected');
+select pg_temp.assert((select count(*) from public.admin_audit_logs where action='set_team_status')=1,'unchanged status is not re-audited');
+select pg_temp.assert((select count(*) from public.admin_list_teams(null,'created_at','desc',25,0,'selected'))=1,'team list status filter');
+select pg_temp.assert((select count(*) from public.admin_list_teams(null,'created_at','desc',25,0,'rejected'))=0,'team list status filter excludes others');
+select pg_temp.assert((select selection_status_updated_by from public.admin_list_users('bob','all','all','all','created_at','desc',25,0))='root_admin','participant export rows carry status metadata');
+select pg_temp.assert(public.admin_team_detail('22222222-2222-2222-2222-222222222222')->>'selection_status'='selected','admin detail has status');
+
+reset role; set local role authenticated;
+select set_config('request.jwt.claim.sub','00000000-0000-0000-0000-00000000000b',true);
+select pg_temp.assert(public.team_detail_for_member('22222222-2222-2222-2222-222222222222')->>'selection_status'='selected','member sees own team status');
+select pg_temp.assert(public.team_detail_for_member('22222222-2222-2222-2222-222222222222')::text !~ 'updated_by','participants do not see who changed the status');
+select pg_temp.assert(pg_temp.raises($$update public.teams set selection_status='selected'$$,'permission denied'),'members cannot write status');
+select pg_temp.assert(pg_temp.raises($$select selection_status from public.teams$$,'permission denied'),'status column not directly readable');
+select pg_temp.assert(pg_temp.raises($$select public.admin_set_team_status('00000000-0000-0000-0000-00000000000b','22222222-2222-2222-2222-222222222222','selected')$$,'permission denied'),'authenticated cannot call admin_set_team_status');
+reset role;
+
 select 'ALL DB CHECKS PASSED' as result;
 rollback;

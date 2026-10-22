@@ -11,6 +11,7 @@
   --color-primary-foreground: #140a02;
   --color-success: #3ecf8e;
   --color-destructive: #f0584f;
+  --color-warning: #f5b83d;
   --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, monospace;
   --animate-fade-up: fade-up 0.4s ease-out both;

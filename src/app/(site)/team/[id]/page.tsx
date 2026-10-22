@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { CalendarDays, Crown, Users } from "lucide-react";
+import { SelectionStatusCard } from "@/components/selection-status";
 import { InviteManager } from "@/components/team/invite-manager";
 import { MemberList } from "@/components/team/member-list";
 import { LeaderActions, LeaveTeamButton } from "@/components/team/team-actions";
@@ -68,6 +69,8 @@ export default async function TeamPage({
           {isLeader ? "You are the leader" : "You are a member"}
         </Badge>
       </div>
+
+      <SelectionStatusCard status={team.selection_status} />
 
       <dl className="grid gap-3 sm:grid-cols-3">
         <Card className="p-4">

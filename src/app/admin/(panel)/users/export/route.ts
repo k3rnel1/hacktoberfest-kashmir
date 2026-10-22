@@ -7,6 +7,7 @@ import {
   type AdminUserRow,
 } from "@/lib/admin-data";
 import { toCsv } from "@/lib/csv";
+import { selectionLabel } from "@/lib/selection";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 export const dynamic = "force-dynamic";
@@ -41,6 +42,9 @@ export async function GET(request: Request) {
       "LinkedIn",
       "Team",
       "Team role",
+      "Team selection status",
+      "Selection status updated at (UTC)",
+      "Selection status updated by",
       "Profile complete",
       "Registered at (UTC)",
     ],
@@ -53,6 +57,9 @@ export async function GET(request: Request) {
       r.linkedin_url,
       r.team_name,
       r.team_role,
+      selectionLabel(r.selection_status),
+      r.selection_status_updated_at,
+      r.selection_status_updated_by,
       r.profile_completed ? "yes" : "no",
       r.created_at,
     ]),
