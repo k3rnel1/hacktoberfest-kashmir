@@ -1,21 +1,12 @@
-// Central event configuration. Fields set to null are shown as "To be announced"
-// until the organizers provide the real values. Do not invent details here.
 export const eventConfig = {
 name: "Hacktoberfest Kashmir",
-
   tagline: "Bring your ideas. Build something real. Shape what’s next.",
-
   description:
   "A one-day, in-person hackathon bringing Kashmir’s developers, students, designers, and tech enthusiasts together to build with open-source AI.",
-
   date: "Tuesday, 27th October 2026",
-
   venue: "Islamia College, Hawal, Srinagar, Jammu & Kashmir",
-
   registrationDeadline: "Sunday, 25th October 2026",
-
-  Contact: "alizubairsh@gmail.com",
-
+  contactEmail: "alizubairsh@gmail.com",
   contactLabel: "Support",
   socials: {
     github: null as string | null,
@@ -24,7 +15,6 @@ name: "Hacktoberfest Kashmir",
 
   },
   team: {
-    // Keep in sync with the default in supabase/migrations (teams.max_members).
     maxMembers: 3,
     minDescriptionLength: 10,
     maxDescriptionLength: 300,
