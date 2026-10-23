@@ -48,6 +48,8 @@ export type AdminTeamRow = {
   created_at: string;
   selection_status: SelectionStatus;
   selection_status_updated_at: string | null;
+  is_finalist: boolean;
+  award: string | null;
   total_count: number;
 };
 
@@ -63,6 +65,9 @@ export type AdminTeamDetail = {
   selection_status: SelectionStatus;
   selection_status_updated_at: string | null;
   selection_status_updated_by: string | null;
+  is_finalist: boolean;
+  award: string | null;
+  award_rank: number | null;
   members: {
     user_id: string;
     role: "leader" | "member";

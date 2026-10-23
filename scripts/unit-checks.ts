@@ -1,5 +1,7 @@
 import assert from "node:assert/strict";
 import { sanitizeCell, toCsv } from "../src/lib/csv";
+import { finalistSchema } from "../src/lib/finalist-schema";
+import { gmailBatches, gmailComposeUrl, personalize, whatsappUrl } from "../src/lib/contact";
 import { profileSchema, registerSchema, safeNext, teamSchema } from "../src/lib/validation";
 
 // CSV formula injection
@@ -34,4 +36,24 @@ assert.equal(safeNext("//evil.com"), "/dashboard");
 assert.equal(safeNext("https://evil.com"), "/dashboard");
 assert.equal(safeNext("/\\evil.com"), "/dashboard");
 assert.equal(safeNext("/join/abc"), "/join/abc");
+// WhatsApp / Gmail links
+assert.equal(whatsappUrl("+919876543210"), "https://wa.me/919876543210");
+assert.equal(whatsappUrl("+919876543210", "Hi & bye"), "https://wa.me/919876543210?text=Hi%20%26%20bye");
+assert.equal(whatsappUrl("12345"), null);
+assert.equal(whatsappUrl(null), null);
+assert.ok(gmailComposeUrl({ to: ["a@gmail.com"] }).startsWith("https://mail.google.com/mail/?view=cm&fs=1&to=a%40gmail.com"));
+const manyEmails = Array.from({ length: 500 }, (_, i) => `user${i}@gmail.com`);
+const batched = gmailBatches(manyEmails, { subject: "Hi", body: "x".repeat(200) });
+assert.ok(batched.length > 1);
+assert.equal(batched.flatMap((b) => b.emails).length, 500);
+assert.ok(batched.every((b) => b.url.length <= 6000));
+assert.ok(batched.every((b) => b.url.includes("bcc=") && !b.url.includes("&to=")));
+assert.equal(personalize("Hi {name}!", "Ali Zubair Shah"), "Hi Ali!");
+assert.equal(personalize("Hi {name}!", null), "Hi there!");
+// Finalist input
+assert.deepEqual(finalistSchema.parse({ finalist: true, award: "  Winner ", rank: "1" }), { finalist: true, award: "Winner", rank: 1 });
+assert.deepEqual(finalistSchema.parse({ finalist: true, award: "", rank: "" }), { finalist: true, award: null, rank: null });
+assert.deepEqual(finalistSchema.parse({ finalist: false, award: "Winner", rank: 2 }), { finalist: false, award: null, rank: null });
+for (const bad of [{ award: "x" }, { award: "", rank: 3 }, { award: "Winner", rank: 0 }, { award: "Winner", rank: 100 }, { award: "a".repeat(61) }])
+  assert.ok(!finalistSchema.safeParse({ finalist: true, rank: null, ...bad }).success, JSON.stringify(bad));
 console.log("UNIT CHECKS PASSED");

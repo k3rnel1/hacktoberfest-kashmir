@@ -9,12 +9,15 @@ export async function Navbar() {
   const user = await getSessionUser();
   const admin = user ? await isAdmin(user.id) : false;
 
-  const links = user
+  const links = [
+    { href: "/finalists", label: "Finalists" },
+    ...(user
     ? [
         { href: admin ? "/admin" : "/dashboard", label: admin ? "Admin" : "Dashboard" },
         ...(admin ? [] : [{ href: "/settings/profile", label: "Profile" }]),
       ]
-    : [];
+    : []),
+  ];
 
   return (
     <header className="sticky top-0 z-40 border-b border-border bg-background/90 backdrop-blur">

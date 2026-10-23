@@ -185,8 +185,6 @@ function RootLayout({ children }) {
 "[project]/src/config/event.ts [app-rsc] (ecmascript)", ((__turbopack_context__) => {
 "use strict";
 
-// Central event configuration. Fields set to null are shown as "To be announced"
-// until the organizers provide the real values. Do not invent details here.
 __turbopack_context__.s([
     "TBA",
     ()=>TBA,
@@ -200,7 +198,7 @@ const eventConfig = {
     date: "Tuesday, 27th October 2026",
     venue: "Islamia College, Hawal, Srinagar, Jammu & Kashmir",
     registrationDeadline: "Sunday, 25th October 2026",
-    Contact: "alizubairsh@gmail.com",
+    contactEmail: "alizubairsh@gmail.com",
     contactLabel: "Support",
     socials: {
         github: null,
@@ -208,7 +206,6 @@ const eventConfig = {
         linkedin: "https://www.linkedin.com/in/ali-zubair-shah-5640033a1"
     },
     team: {
-        // Keep in sync with the default in supabase/migrations (teams.max_members).
         maxMembers: 3,
         minDescriptionLength: 10,
         maxDescriptionLength: 300,

@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { dbError, fail, GENERIC_ERROR, SESSION_EXPIRED, type ActionResult } from "@/lib/action";
 import { getActionAdmin, isAdmin } from "@/lib/auth";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { finalistSchema } from "@/lib/finalist-schema";
 import { selectionLabel, selectionStatusSchema } from "@/lib/selection";
 import { uuidSchema } from "@/lib/validation";
 
@@ -83,6 +84,55 @@ export async function adminSetTeamStatusAction(
   revalidatePath("/dashboard");
   revalidatePath(`/team/${teamId}`);
   return { ok: true, message: `Status set to ${selectionLabel(parsed.data)}.` };
+}
+
+export async function adminSetFinalistAction(
+  teamId: string,
+  input: { finalist: boolean; award: string; rank: string | number | null },
+): Promise<ActionResult> {
+  const g = await guard(teamId);
+  if (!g.ok) return g.result;
+
+  const parsed = finalistSchema.safeParse(input);
+  if (!parsed.success) {
+    return fail(parsed.error.issues[0]?.message ?? GENERIC_ERROR);
+  }
+
+  const { error } = await createAdminClient().rpc("admin_set_team_finalist", {
+    p_admin_id: g.adminId,
+    p_team_id: teamId,
+    p_finalist: parsed.data.finalist,
+    p_award: parsed.data.award,
+    p_rank: parsed.data.rank,
+  });
+  if (error) return fail(dbError(error.message));
+
+  revalidatePath("/admin", "layout");
+  revalidatePath("/finalists");
+  return { ok: true, message: parsed.data.finalist ? "Finalist details saved." : "Removed from finalists." };
+}
+
+// Records that an admin opened a bulk email / WhatsApp batch. Only counts are stored,
+// never addresses or phone numbers.
+export async function adminLogBulkContactAction(
+  channel: "email" | "whatsapp",
+  audience: string,
+  count: number,
+): Promise<void> {
+  const session = await getActionAdmin();
+  if (!session) return;
+  if (channel !== "email" && channel !== "whatsapp") return;
+  await createAdminClient().rpc("admin_log", {
+    p_admin_id: session.user.id,
+    p_action: "bulk_contact",
+    p_target_type: "participants",
+    p_target_id: null,
+    p_metadata: {
+      channel,
+      audience: String(audience).slice(0, 40),
+      recipient_count: Math.max(0, Math.min(Math.trunc(Number(count)) || 0, 100000)),
+    },
+  });
 }
 
 function temporaryPassword() {

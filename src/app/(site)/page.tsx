@@ -29,12 +29,12 @@ const steps = [
   {
     icon: Users,
     title: "Create or join a team",
-    body: "Start a team and become its leader, or join a friend's team with their invitation link.",
+    body: "Start a team and become its leader, or join someone else's as a member.",
   },
   {
     icon: UsersRound,
     title: "Await Selection Updates",
-    body: `Monitor your registered email for updates from the organizers regarding your selection status. ${eventConfig.team.maxMembers} `,
+    body: `Monitor the team page for updates in the selection status. ${eventConfig.team.maxMembers} `,
   },
 ];
 

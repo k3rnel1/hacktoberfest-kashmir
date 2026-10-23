@@ -122,5 +122,34 @@ select pg_temp.assert(pg_temp.raises($$select selection_status from public.teams
 select pg_temp.assert(pg_temp.raises($$select public.admin_set_team_status('00000000-0000-0000-0000-00000000000b','22222222-2222-2222-2222-222222222222','selected')$$,'permission denied'),'authenticated cannot call admin_set_team_status');
 reset role;
 
+-- Finalists and awards ------------------------------------------------------------
+select pg_temp.assert((select not is_finalist and award is null from public.teams),'teams are not finalists by default');
+select pg_temp.assert(public.public_finalists()='[]'::jsonb,'no finalists yet');
+update public.teams set selection_status='in_process';
+select pg_temp.assert(pg_temp.raises($$select public.admin_set_team_finalist('00000000-0000-0000-0000-0000000000ff','22222222-2222-2222-2222-222222222222',true,'Winner',1)$$,'NOT_SELECTED'),'only selected teams can be finalists');
+update public.teams set selection_status='selected';
+select pg_temp.assert(pg_temp.raises($$select public.admin_set_team_finalist('00000000-0000-0000-0000-0000000000ff','99999999-9999-9999-9999-999999999999',true,null,null)$$,'TEAM_NOT_FOUND'),'finalist: unknown team');
+select pg_temp.assert(pg_temp.raises($$select public.admin_set_team_finalist('00000000-0000-0000-0000-0000000000ff','22222222-2222-2222-2222-222222222222',true,'x',null)$$,'INVALID_INPUT'),'award too short');
+select pg_temp.assert(pg_temp.raises($$select public.admin_set_team_finalist('00000000-0000-0000-0000-0000000000ff','22222222-2222-2222-2222-222222222222',true,null,3)$$,'INVALID_INPUT'),'rank needs an award');
+select pg_temp.assert(pg_temp.raises($$select public.admin_set_team_finalist('00000000-0000-0000-0000-0000000000ff','22222222-2222-2222-2222-222222222222',true,'Winner',100)$$,'INVALID_INPUT'),'rank out of range');
+select public.admin_set_team_finalist('00000000-0000-0000-0000-0000000000ff','22222222-2222-2222-2222-222222222222',true,null,null);
+select pg_temp.assert(jsonb_array_length(public.public_finalists())=1,'finalist listed');
+select public.admin_set_team_finalist('00000000-0000-0000-0000-0000000000ff','22222222-2222-2222-2222-222222222222',true,'  Winner ',1);
+select pg_temp.assert((select award='Winner' and award_rank=1 from public.teams),'award saved and trimmed');
+select pg_temp.assert(public.public_finalists()->0->>'award'='Winner','public data has award');
+select pg_temp.assert(public.public_finalists()::text !~ '(mobile|gmail|@gmail|github|linkedin|leader_id|"id")','public finalists leak nothing private');
+select pg_temp.assert((select count(*) from public.admin_audit_logs where action='set_team_finalist')=2,'finalist changes audited');
+select pg_temp.assert((select is_finalist and award='Winner' from public.admin_list_teams(null,'created_at','desc',25,0,'all')),'admin list carries finalist fields');
+select pg_temp.assert((public.admin_team_detail('22222222-2222-2222-2222-222222222222')->>'award')='Winner','admin detail carries award');
+select pg_temp.assert(pg_temp.raises($$update public.teams set is_finalist=false, award='X!'$$,'new row for relation'),'constraint: award needs finalist');
+select public.admin_set_team_finalist('00000000-0000-0000-0000-0000000000ff','22222222-2222-2222-2222-222222222222',false,'Winner',1);
+select pg_temp.assert((select not is_finalist and award is null and award_rank is null from public.teams),'removing finalist clears the award');
+
+reset role; set local role authenticated;
+select pg_temp.assert(pg_temp.raises($$select public.public_finalists()$$,'permission denied'),'browsers cannot call public_finalists directly');
+select pg_temp.assert(pg_temp.raises($$select public.admin_set_team_finalist('00000000-0000-0000-0000-00000000000b','22222222-2222-2222-2222-222222222222',true,null,null)$$,'permission denied'),'authenticated cannot set finalists');
+select pg_temp.assert(pg_temp.raises($$select is_finalist from public.teams$$,'permission denied'),'finalist columns not directly readable');
+reset role;
+
 select 'ALL DB CHECKS PASSED' as result;
 rollback;

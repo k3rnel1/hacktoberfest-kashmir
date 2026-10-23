@@ -85,6 +85,11 @@ export default async function AdminTeamsPage({
                   <Link href={`/admin/teams/${team.id}`} className="text-primary hover:underline">
                     {team.name}
                   </Link>
+                  {team.is_finalist && (
+                    <Badge variant="primary" className="ml-2">
+                      {team.award ?? "Finalist"}
+                    </Badge>
+                  )}
                   {team.invite_revoked && (
                     <Badge variant="destructive" className="ml-2">
                       <Link2Off className="size-3" aria-hidden /> invite revoked

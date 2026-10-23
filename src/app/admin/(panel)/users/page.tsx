@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Download } from "lucide-react";
+import { Download, MessageSquare } from "lucide-react";
 import { RemoveMemberButton, ResetPasswordButton } from "@/components/admin/admin-actions";
 import { href, Pagination, SearchBar, SelectFilter, SortHeader } from "@/components/admin/list-controls";
+import { GmailLink, WhatsAppLink } from "@/components/admin/contact-links";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Table, TBody, TD, TH, THead } from "@/components/ui/table";
@@ -53,12 +54,19 @@ export default async function AdminUsersPage({
           <h1 className="text-3xl font-semibold tracking-tight">Participants</h1>
           <p className="mt-1 text-sm text-muted">{total} matching</p>
         </div>
+        <div className="flex flex-wrap gap-2">
+        <Button asChild variant="outline">
+          <Link href="/admin/contact">
+            <MessageSquare /> Message participants
+          </Link>
+        </Button>
         <Button asChild variant="outline">
           {/* A plain link: the export is a file download from a server route. */}
           <a href={exportHref} download>
             <Download /> Export CSV
           </a>
         </Button>
+        </div>
       </div>
 
       <SearchBar
@@ -141,8 +149,12 @@ export default async function AdminUsersPage({
               <tr key={u.id}>
                 <TD className="font-mono text-xs">@{u.username}</TD>
                 <TD className="font-medium">{u.full_name ?? "—"}</TD>
-                <TD className="font-mono text-xs">{u.mobile_number ?? "—"}</TD>
-                <TD className="text-xs">{u.gmail ?? "—"}</TD>
+                <TD>
+                  <WhatsAppLink mobile={u.mobile_number} />
+                </TD>
+                <TD>
+                  <GmailLink email={u.gmail} />
+                </TD>
                 <TD>
                   {u.github_username ? (
                     <a

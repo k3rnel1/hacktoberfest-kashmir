@@ -7,6 +7,8 @@ import {
   RemoveMemberButton,
   RevokeInviteButton,
 } from "@/components/admin/admin-actions";
+import { GmailLink, WhatsAppLink } from "@/components/admin/contact-links";
+import { FinalistControl } from "@/components/admin/finalist-control";
 import { SelectionStatusControl } from "@/components/admin/selection-status-control";
 import { SelectionBadge } from "@/components/selection-status";
 import { Badge } from "@/components/ui/badge";
@@ -64,6 +66,22 @@ export default async function AdminTeamPage({ params }: { params: Promise<{ id: 
         </p>
       </Card>
 
+      <Card className="grid gap-3 p-4">
+        <div className="flex flex-wrap items-center gap-2">
+          <h2 className="text-sm font-medium text-muted">Finalist &amp; award</h2>
+          {team.is_finalist && <Badge variant="primary">Finalist</Badge>}
+          {team.award && <Badge variant="success">{team.award}</Badge>}
+        </div>
+        <FinalistControl
+          key={`${team.is_finalist}-${team.award}-${team.award_rank}`}
+          teamId={team.id}
+          isFinalist={team.is_finalist}
+          award={team.award}
+          awardRank={team.award_rank}
+          canBeFinalist={team.selection_status === "selected"}
+        />
+      </Card>
+
       <div className="grid gap-3 sm:grid-cols-3">
         <Card className="p-4">
           <p className="text-xs text-muted">Members</p>
@@ -115,8 +133,12 @@ export default async function AdminTeamPage({ params }: { params: Promise<{ id: 
                 <TD>
                   <Badge variant={m.role === "leader" ? "primary" : "default"}>{m.role}</Badge>
                 </TD>
-                <TD className="font-mono text-xs">{m.mobile_number ?? "—"}</TD>
-                <TD className="text-xs">{m.gmail ?? "—"}</TD>
+                <TD>
+                  <WhatsAppLink mobile={m.mobile_number} />
+                </TD>
+                <TD>
+                  <GmailLink email={m.gmail} />
+                </TD>
                 <TD>
                   {m.github_username ? (
                     <a

@@ -46,6 +46,7 @@ const DB_ERRORS: Record<string, string> = {
     "This user is the team leader. Dissolve the team instead of removing the leader.",
   TEAM_NOT_FOUND: "That team no longer exists.",
   INVALID_STATUS: "Choose a valid selection status.",
+  NOT_SELECTED: "Only teams with the Selected status can be finalists.",
 };
 
 export function dbError(message: string | undefined): string {
