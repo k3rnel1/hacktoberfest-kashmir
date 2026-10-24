@@ -3,20 +3,42 @@ import { Menu } from "lucide-react";
 import { logoutAction } from "@/actions/auth";
 import { Button } from "@/components/ui/button";
 import { getSessionUser, isAdmin } from "@/lib/auth";
+import { getPendingCount } from "@/lib/matching";
+import { getUnreadNotificationCount } from "@/lib/notifications";
 import { Logo } from "./logo";
 
 export async function Navbar() {
   const user = await getSessionUser();
   const admin = user ? await isAdmin(user.id) : false;
 
-  const links = [
-    { href: "/finalists", label: "Finalists" },
+  const participant = Boolean(user) && !admin;
+  const [pending, unread] = participant
+    ? await Promise.all([getPendingCount(), getUnreadNotificationCount()])
+    : [0, 0];
+
+  const links: { href: string; label: string; badge?: number; badgeLabel?: string }[] = [
     ...(user
-    ? [
-        { href: admin ? "/admin" : "/dashboard", label: admin ? "Admin" : "Dashboard" },
-        ...(admin ? [] : [{ href: "/settings/profile", label: "Profile" }]),
-      ]
-    : []),
+      ? [
+          { href: admin ? "/admin" : "/dashboard", label: admin ? "Admin" : "Dashboard" },
+          ...(participant
+            ? [
+                {
+                  href: "/teams",
+                  label: "Teams",
+                  badge: pending,
+                  badgeLabel: `${pending} waiting for your answer`,
+                },
+                {
+                  href: "/teams/notifications",
+                  label: "Notifications",
+                  badge: unread,
+                  badgeLabel: `${unread} unread`,
+                },
+                { href: "/settings/profile", label: "Profile" },
+              ]
+            : []),
+        ]
+      : []),
   ];
 
   return (
@@ -27,7 +49,17 @@ export async function Navbar() {
         <nav aria-label="Main" className="hidden items-center gap-1 sm:flex">
           {links.map((link) => (
             <Button key={link.href} asChild variant="ghost" size="sm">
-              <Link href={link.href}>{link.label}</Link>
+              <Link href={link.href}>
+                {link.label}
+                {link.badge ? (
+                  <span
+                    className="ml-1.5 grid min-w-5 place-items-center rounded-full bg-primary px-1.5 text-xs font-semibold text-primary-foreground"
+                    aria-label={link.badgeLabel}
+                  >
+                    {link.badge}
+                  </span>
+                ) : null}
+              </Link>
             </Button>
           ))}
           {user ? (
@@ -60,9 +92,17 @@ export async function Navbar() {
               <Link
                 key={link.href}
                 href={link.href}
-                className="rounded-md px-3 py-2 text-sm hover:bg-surface-2"
+                className="flex items-center justify-between rounded-md px-3 py-2 text-sm hover:bg-surface-2"
               >
                 {link.label}
+                {link.badge ? (
+                  <span
+                    className="rounded-full bg-primary px-1.5 text-xs font-semibold text-primary-foreground"
+                    aria-label={link.badgeLabel}
+                  >
+                    {link.badge}
+                  </span>
+                ) : null}
               </Link>
             ))}
             {user ? (

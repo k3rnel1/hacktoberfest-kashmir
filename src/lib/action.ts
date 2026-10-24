@@ -47,6 +47,16 @@ const DB_ERRORS: Record<string, string> = {
   TEAM_NOT_FOUND: "That team no longer exists.",
   INVALID_STATUS: "Choose a valid selection status.",
   NOT_SELECTED: "Only teams with the Selected status can be finalists.",
+  DUPLICATE_REQUEST: "There is already a pending request or invitation between you and this team.",
+  REQUEST_NOT_FOUND: "That request no longer exists.",
+  REQUEST_NOT_PENDING: "That request has already been answered or cancelled.",
+  TARGET_NOT_LOOKING: "This participant is no longer looking for a team.",
+  TARGET_UNAVAILABLE: "This participant has already joined a team.",
+  CANNOT_REMOVE_SELF:
+    "You cannot remove yourself. Transfer leadership to another member or dissolve the team.",
+  MEMBER_NOT_FOUND: "That person is no longer a member of your team.",
+  REMOVED_FROM_TEAM:
+    "The leader of this team removed you from it, so you cannot rejoin with a link or request. Ask the leader to invite you directly.",
 };
 
 export function dbError(message: string | undefined): string {

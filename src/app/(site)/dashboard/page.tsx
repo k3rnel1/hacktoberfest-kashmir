@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, CheckCircle2, Circle, Link2, Plus } from "lucide-react";
 import { PasteInvite } from "@/components/paste-invite";
+import { Alert } from "@/components/ui/alert";
 import { SelectionBadge, SelectionStatusCard } from "@/components/selection-status";
 import { MemberList } from "@/components/team/member-list";
 import { Badge } from "@/components/ui/badge";
@@ -9,6 +10,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { eventConfig } from "@/config/event";
 import { requireCompleteProfile } from "@/lib/auth";
+import { getPendingCount } from "@/lib/matching";
+import { getUnreadNotificationCount } from "@/lib/notifications";
 import { getMyTeamId, getTeamDetail } from "@/lib/teams";
 
 export const metadata: Metadata = { title: "Dashboard" };
@@ -17,6 +20,7 @@ export default async function DashboardPage() {
   const { user, profile } = await requireCompleteProfile("/dashboard");
   const teamId = await getMyTeamId(user.id);
   const team = teamId ? await getTeamDetail(teamId) : null;
+  const [pending, unread] = await Promise.all([getPendingCount(), getUnreadNotificationCount()]);
 
   const steps = [
     { label: "Account created", done: true },
@@ -45,6 +49,27 @@ export default async function DashboardPage() {
           <Link href="/settings/profile">Edit profile</Link>
         </Button>
       </div>
+
+      {pending > 0 && (
+        <Alert variant="info">
+          You have {pending} team {pending === 1 ? "request" : "requests"} waiting for your answer.{" "}
+          <Link href="/teams/requests" className="font-medium text-primary hover:underline">
+            Review now
+          </Link>
+        </Alert>
+      )}
+
+      {unread > 0 && (
+        <Alert variant="info">
+          You have {unread} unread {unread === 1 ? "notification" : "notifications"}.{" "}
+          <Link
+            href="/teams/notifications"
+            className="font-medium text-primary hover:underline"
+          >
+            View notifications
+          </Link>
+        </Alert>
+      )}
 
       <Card>
         <CardHeader>
@@ -103,7 +128,11 @@ export default async function DashboardPage() {
           <CardContent className="grid gap-4">
             <SelectionStatusCard status={team.selection_status} />
             <p className="text-sm text-muted">{team.description}</p>
-            <MemberList members={team.members} currentUserId={user.id} />
+            <MemberList
+              members={team.members}
+              currentUserId={user.id}
+              canRemove={team.leader_id === user.id}
+            />
             <Button asChild className="w-fit">
               <Link href={`/team/${team.id}`}>
                 Open team page <ArrowRight />
@@ -140,6 +169,9 @@ export default async function DashboardPage() {
             </CardHeader>
             <CardContent className="mt-auto">
               <PasteInvite />
+              <Button asChild variant="outline" size="sm" className="mt-3">
+                <Link href="/teams">Browse teams</Link>
+              </Button>
             </CardContent>
           </Card>
         </div>

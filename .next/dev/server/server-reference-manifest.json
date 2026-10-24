@@ -1,236 +1,76 @@
 {
   "node": {
-    "002409e239442a402db9b252f9449078b5d0ed8018": {
+    "002c7356718fa4c786df531d39993f2df7dbf5bb11": {
       "workers": {
-        "app/(site)/dashboard/page": {
-          "moduleId": "[project]/.next-internal/server/app/(site)/dashboard/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/actions/auth.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
-          "async": false
-        },
-        "app/(site)/finalists/page": {
-          "moduleId": "[project]/.next-internal/server/app/(site)/finalists/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/actions/auth.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
-          "async": false
-        },
         "app/(site)/login/page": {
           "moduleId": "[project]/.next-internal/server/app/(site)/login/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/actions/auth.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
           "async": false
         },
         "app/(site)/page": {
           "moduleId": "[project]/.next-internal/server/app/(site)/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/actions/auth.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
-          "async": false
-        },
-        "app/admin/(panel)/page": {
-          "moduleId": "[project]/.next-internal/server/app/admin/(panel)/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/actions/auth.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
-          "async": false
-        },
-        "app/admin/(panel)/teams/[id]/page": {
-          "moduleId": "[project]/.next-internal/server/app/admin/(panel)/teams/[id]/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/actions/auth.ts [app-rsc] (ecmascript)\", ACTIONS_MODULE1 => \"[project]/src/actions/admin.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
-          "async": false
-        },
-        "app/admin/(panel)/teams/page": {
-          "moduleId": "[project]/.next-internal/server/app/admin/(panel)/teams/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/actions/auth.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
           "async": false
         }
       },
       "filename": "src/actions/auth.ts",
       "exportedName": "logoutAction"
     },
-    "400c29df5feefcb8cfd2f328a0bc4b4935be196e26": {
+    "403aa677805d92a3158807c868349ab0ca17e0ea93": {
       "workers": {
-        "app/(site)/dashboard/page": {
-          "moduleId": "[project]/.next-internal/server/app/(site)/dashboard/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/actions/auth.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
-          "async": false
-        },
-        "app/(site)/finalists/page": {
-          "moduleId": "[project]/.next-internal/server/app/(site)/finalists/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/actions/auth.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
-          "async": false
-        },
         "app/(site)/login/page": {
           "moduleId": "[project]/.next-internal/server/app/(site)/login/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/actions/auth.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
           "async": false
         },
         "app/(site)/page": {
           "moduleId": "[project]/.next-internal/server/app/(site)/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/actions/auth.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
-          "async": false
-        },
-        "app/admin/(panel)/page": {
-          "moduleId": "[project]/.next-internal/server/app/admin/(panel)/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/actions/auth.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
-          "async": false
-        },
-        "app/admin/(panel)/teams/[id]/page": {
-          "moduleId": "[project]/.next-internal/server/app/admin/(panel)/teams/[id]/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/actions/auth.ts [app-rsc] (ecmascript)\", ACTIONS_MODULE1 => \"[project]/src/actions/admin.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
-          "async": false
-        },
-        "app/admin/(panel)/teams/page": {
-          "moduleId": "[project]/.next-internal/server/app/admin/(panel)/teams/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/actions/auth.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
-          "async": false
-        }
-      },
-      "filename": "src/actions/auth.ts",
-      "exportedName": "registerAction"
-    },
-    "40133045b78733d738b845e0478498da6076459821": {
-      "workers": {
-        "app/(site)/dashboard/page": {
-          "moduleId": "[project]/.next-internal/server/app/(site)/dashboard/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/actions/auth.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
-          "async": false
-        },
-        "app/(site)/finalists/page": {
-          "moduleId": "[project]/.next-internal/server/app/(site)/finalists/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/actions/auth.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
-          "async": false
-        },
-        "app/(site)/login/page": {
-          "moduleId": "[project]/.next-internal/server/app/(site)/login/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/actions/auth.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
-          "async": false
-        },
-        "app/(site)/page": {
-          "moduleId": "[project]/.next-internal/server/app/(site)/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/actions/auth.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
-          "async": false
-        },
-        "app/admin/(panel)/page": {
-          "moduleId": "[project]/.next-internal/server/app/admin/(panel)/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/actions/auth.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
-          "async": false
-        },
-        "app/admin/(panel)/teams/[id]/page": {
-          "moduleId": "[project]/.next-internal/server/app/admin/(panel)/teams/[id]/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/actions/auth.ts [app-rsc] (ecmascript)\", ACTIONS_MODULE1 => \"[project]/src/actions/admin.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
-          "async": false
-        },
-        "app/admin/(panel)/teams/page": {
-          "moduleId": "[project]/.next-internal/server/app/admin/(panel)/teams/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/actions/auth.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
           "async": false
         }
       },
       "filename": "src/actions/auth.ts",
       "exportedName": "adminLoginAction"
     },
-    "4069bca595071f0d6e740ccd09321d7851bb32f994": {
+    "404cf501a404838a078371462cad3f43ced28bf988": {
       "workers": {
-        "app/(site)/dashboard/page": {
-          "moduleId": "[project]/.next-internal/server/app/(site)/dashboard/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/actions/auth.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
-          "async": false
-        },
-        "app/(site)/finalists/page": {
-          "moduleId": "[project]/.next-internal/server/app/(site)/finalists/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/actions/auth.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
-          "async": false
-        },
         "app/(site)/login/page": {
           "moduleId": "[project]/.next-internal/server/app/(site)/login/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/actions/auth.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
           "async": false
         },
         "app/(site)/page": {
           "moduleId": "[project]/.next-internal/server/app/(site)/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/actions/auth.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
-          "async": false
-        },
-        "app/admin/(panel)/page": {
-          "moduleId": "[project]/.next-internal/server/app/admin/(panel)/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/actions/auth.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
-          "async": false
-        },
-        "app/admin/(panel)/teams/[id]/page": {
-          "moduleId": "[project]/.next-internal/server/app/admin/(panel)/teams/[id]/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/actions/auth.ts [app-rsc] (ecmascript)\", ACTIONS_MODULE1 => \"[project]/src/actions/admin.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
-          "async": false
-        },
-        "app/admin/(panel)/teams/page": {
-          "moduleId": "[project]/.next-internal/server/app/admin/(panel)/teams/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/actions/auth.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
-          "async": false
-        }
-      },
-      "filename": "src/actions/auth.ts",
-      "exportedName": "changePasswordAction"
-    },
-    "40e57e7a6726920e20166358eda4e465843a0245cd": {
-      "workers": {
-        "app/(site)/dashboard/page": {
-          "moduleId": "[project]/.next-internal/server/app/(site)/dashboard/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/actions/auth.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
-          "async": false
-        },
-        "app/(site)/finalists/page": {
-          "moduleId": "[project]/.next-internal/server/app/(site)/finalists/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/actions/auth.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
-          "async": false
-        },
-        "app/(site)/login/page": {
-          "moduleId": "[project]/.next-internal/server/app/(site)/login/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/actions/auth.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
-          "async": false
-        },
-        "app/(site)/page": {
-          "moduleId": "[project]/.next-internal/server/app/(site)/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/actions/auth.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
-          "async": false
-        },
-        "app/admin/(panel)/page": {
-          "moduleId": "[project]/.next-internal/server/app/admin/(panel)/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/actions/auth.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
-          "async": false
-        },
-        "app/admin/(panel)/teams/[id]/page": {
-          "moduleId": "[project]/.next-internal/server/app/admin/(panel)/teams/[id]/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/actions/auth.ts [app-rsc] (ecmascript)\", ACTIONS_MODULE1 => \"[project]/src/actions/admin.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
-          "async": false
-        },
-        "app/admin/(panel)/teams/page": {
-          "moduleId": "[project]/.next-internal/server/app/admin/(panel)/teams/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/actions/auth.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
           "async": false
         }
       },
       "filename": "src/actions/auth.ts",
       "exportedName": "loginAction"
     },
-    "6071c1cd60991535ee5a2a9d30175c066efedfa06b": {
+    "404e4271fff6c0ddac93439279a7b67e94b09d7158": {
       "workers": {
-        "app/admin/(panel)/teams/[id]/page": {
-          "moduleId": "[project]/.next-internal/server/app/admin/(panel)/teams/[id]/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/actions/auth.ts [app-rsc] (ecmascript)\", ACTIONS_MODULE1 => \"[project]/src/actions/admin.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+        "app/(site)/login/page": {
+          "moduleId": "[project]/.next-internal/server/app/(site)/login/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/actions/auth.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false
+        },
+        "app/(site)/page": {
+          "moduleId": "[project]/.next-internal/server/app/(site)/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/actions/auth.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
           "async": false
         }
       },
-      "filename": "src/actions/admin.ts",
-      "exportedName": "adminSetTeamStatusAction"
+      "filename": "src/actions/auth.ts",
+      "exportedName": "registerAction"
     },
-    "609ee3327d7bbcd4fad545fa614e263379488634cb": {
+    "40df8411b2184e8504675ae671c4cf3aa0ab2c0c7f": {
       "workers": {
-        "app/admin/(panel)/teams/[id]/page": {
-          "moduleId": "[project]/.next-internal/server/app/admin/(panel)/teams/[id]/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/actions/auth.ts [app-rsc] (ecmascript)\", ACTIONS_MODULE1 => \"[project]/src/actions/admin.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+        "app/(site)/login/page": {
+          "moduleId": "[project]/.next-internal/server/app/(site)/login/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/actions/auth.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false
+        },
+        "app/(site)/page": {
+          "moduleId": "[project]/.next-internal/server/app/(site)/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/actions/auth.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
           "async": false
         }
       },
-      "filename": "src/actions/admin.ts",
-      "exportedName": "adminSetFinalistAction"
-    },
-    "406147cb3336fa9a65e0998d5fb25611d6a9adabfc": {
-      "workers": {
-        "app/admin/(panel)/teams/[id]/page": {
-          "moduleId": "[project]/.next-internal/server/app/admin/(panel)/teams/[id]/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/actions/auth.ts [app-rsc] (ecmascript)\", ACTIONS_MODULE1 => \"[project]/src/actions/admin.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
-          "async": false
-        }
-      },
-      "filename": "src/actions/admin.ts",
-      "exportedName": "adminRevokeInviteAction"
-    },
-    "40b5afc7b8c3c887944bf4d70a951b801e40538a09": {
-      "workers": {
-        "app/admin/(panel)/teams/[id]/page": {
-          "moduleId": "[project]/.next-internal/server/app/admin/(panel)/teams/[id]/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/actions/auth.ts [app-rsc] (ecmascript)\", ACTIONS_MODULE1 => \"[project]/src/actions/admin.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
-          "async": false
-        }
-      },
-      "filename": "src/actions/admin.ts",
-      "exportedName": "adminResetPasswordAction"
-    },
-    "40565bb52a321cf3eb2e3e10fd45b6225b89adc1bd": {
-      "workers": {
-        "app/admin/(panel)/teams/[id]/page": {
-          "moduleId": "[project]/.next-internal/server/app/admin/(panel)/teams/[id]/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/actions/auth.ts [app-rsc] (ecmascript)\", ACTIONS_MODULE1 => \"[project]/src/actions/admin.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
-          "async": false
-        }
-      },
-      "filename": "src/actions/admin.ts",
-      "exportedName": "adminRemoveMemberAction"
-    },
-    "40bbd4753af0dbabe39787464e96a3859f7df40497": {
-      "workers": {
-        "app/admin/(panel)/teams/[id]/page": {
-          "moduleId": "[project]/.next-internal/server/app/admin/(panel)/teams/[id]/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/actions/auth.ts [app-rsc] (ecmascript)\", ACTIONS_MODULE1 => \"[project]/src/actions/admin.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
-          "async": false
-        }
-      },
-      "filename": "src/actions/admin.ts",
-      "exportedName": "adminDissolveTeamAction"
+      "filename": "src/actions/auth.ts",
+      "exportedName": "changePasswordAction"
     }
   },
   "edge": {},
-  "encryptionKey": "pyXmHGa3Temo+jpSQZZaHM52ixB2X01LtG2yS++24yc="
+  "encryptionKey": "gUTo3eqJW36XTO055O0AJQddyNiLWT50V3W2fnmfadQ="
 }

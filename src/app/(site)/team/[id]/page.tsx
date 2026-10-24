@@ -100,7 +100,7 @@ export default async function TeamPage({
           <h2 id="members-heading" className="text-lg font-semibold">
             Members
           </h2>
-          <MemberList members={team.members} currentUserId={user.id} />
+          <MemberList members={team.members} currentUserId={user.id} canRemove={isLeader} />
         </section>
 
         <aside className="grid content-start gap-4">

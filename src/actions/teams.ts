@@ -103,6 +103,25 @@ export async function transferLeadershipAction(newLeaderId: string): Promise<Act
   return { ok: true, message: "Leadership transferred." };
 }
 
+// The leader removes a member of their own team. The team is derived from the
+// caller's leadership in the database, so the browser cannot choose which team.
+export async function kickMemberAction(userId: string): Promise<ActionResult> {
+  const session = await getActionUser();
+  if (!session) return fail(SESSION_EXPIRED);
+  if (!uuidSchema.safeParse(userId).success) return fail(dbError("MEMBER_NOT_FOUND"));
+  if (!(await rateLimit(`kick-member:${session.user.id}`, 30, 60 * 60))) return fail(TOO_MANY);
+
+  const admin = createAdminClient();
+  const { error } = await admin.rpc("kick_team_member", {
+    p_leader_id: session.user.id,
+    p_user_id: userId,
+  });
+  if (error) return fail(dbError(error.message));
+
+  revalidatePath("/", "layout");
+  return { ok: true, message: "Member removed from the team." };
+}
+
 export async function dissolveTeamAction(teamId: string): Promise<ActionResult> {
   const session = await getActionUser();
   if (!session) return fail(SESSION_EXPIRED);
