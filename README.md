@@ -241,8 +241,7 @@ Administrative permissions and database access policies should be enforced by th
 
 ## License
 
-No license has been specified in this README. Check the repository for an existing `LICENSE` file before adding or declaring a license.
+This project is licensed under the MIT License. See the LICENSE file for details
 
 ---
 
-**Hacktoberfest Kashmir** — bringing participants together to collaborate, build, and contribute to open source.
