@@ -1,162 +1,248 @@
-# Hacktoberfest Kashmir
+# Hacktoberfest Kashmir 
 
-Registration and team-management site for **Hacktoberfest Kashmir**, a one-day, in-person hackathon in Srinagar. Participants register, complete their profile, and create or join teams through private invite links. Organizers manage everything from an admin panel, including the team selection phase.
+**An event platform for participants, teams, and organizers — built for Hacktoberfest Kashmir.**
 
-Built with Next.js (App Router), TypeScript, Tailwind CSS, Supabase (Auth + PostgreSQL + RLS) and deployed on Vercel.
+Hacktoberfest Kashmir brings developers together to explore open source, collaborate with other participants, and turn ideas into working projects. This repository contains the web platform supporting participant registration workflows, team formation, and administrative team evaluation.
+
+---
+
+## Overview
+
+The platform is designed to make managing a collaborative hackathon easier for both participants and organizers. Participants can find teammates, discover existing teams, manage invitations, and coordinate their team formation. Organizers can review teams through a structured shortlisting workflow.
+
+Rather than handling team formation through disconnected messages and spreadsheets, the platform brings these workflows into one place.
 
 ## Features
 
-**Participants**
-- Username and password sign-up, profile completion (name, mobile, Gmail, GitHub, LinkedIn)
-- Create a team, invite members with a private link, transfer leadership, leave or dissolve
-- One team per participant, with a configurable team size limit
-- Team selection status (In Process, Selected, On Hold, Rejected) on the dashboard and team page
+### 👥 Team Management
 
-**Admins** (`/admin`)
-- Dashboard statistics, participant and team lists with search, sorting and filters
-- Set a team's selection status, remove members, revoke invites, dissolve teams, reset passwords
-- Participants CSV export, including selection status, when it was updated and by whom
-- Audit log of every administrative action
+A dedicated Teams section provides the core workflows for team formation.
 
-## Team matching
+- **Browse Teams** — Explore existing teams and find one to join.
+- **Looking for Teams** — Register as a participant searching for a team and make your availability discoverable to team leaders.
+- **Join Requests** — Send requests to join teams and manage incoming requests as a team leader.
+- **Invitations** — Receive and manage invitations from team leaders and other participants through the platform.
+- **Invite Links** — Share team invitation links to help prospective members find their way into a team.
+- **Team Management** — Team leaders can recruit members, manage their team, or dissolve it when they decide to pursue another team.
 
-The **Teams** tab (`/teams`) helps participants find each other:
+Teams without the required members may receive lower priority during shortlisting, so participants are encouraged to complete their teams.
 
-- **Browse Teams**: search teams, see open positions and members, and send a request to join.
-- **Looking for a Team**: list your skills and interests so team leaders can find and invite you; leaders browse the directory and send invitations.
-- **Requests & Invitations**: pending, accepted, rejected and cancelled requests, with accept, decline and cancel actions. A badge in the navbar shows what is waiting for you.
-- **Finalists**: finalist and winning teams (also public at `/finalists`).
+### 🏆 Team Shortlisting
 
-Acceptance happens inside a database function that locks the team row, so a team can never exceed its size limit, and joining any team clears the participant's listing and other open requests. Contact details are never shown in these views. Matching never changes a team's selection status.
+The platform supports a structured review process for evaluating registered teams.
 
-## Finalists
+The evaluation workflow covers:
 
-Admins mark a `Selected` team as a finalist and optionally give it an award (for example "Winner") from the team's admin page. The public page shows team name, description, award and member names only.
+- Team identification and review
+- Team leader's LinkedIn profile
+- Team leader's GitHub profile
+- Members' portfolios
+- Evaluation scores and rankings
 
-## Selection statuses
+The portfolio review separates the leader's detailed assessment from the broader assessment of team members.
 
-| Database value | Label |
+**Leader portfolio review** can include:
+
+- Profile presentation
+- Technical expertise
+- Certifications
+- Experience
+
+**Member portfolio review** provides a concise overview with qualitative remarks, such as *Bad, Average, Good,* or *Excellent*.
+
+This approach helps organizers assess teams consistently and prioritize them for further consideration.
+
+### ⭐ Finalist Management
+
+Finalist management is integrated into the Teams workflow, keeping team discovery and finalist visibility within the same section rather than requiring a separate top-level tab.
+
+Authorized organizers can manage which teams are marked as finalists through the administrative interface.
+
+### 🔐 Administrative Workflows
+
+Administrative functionality supports organizer-side review and team evaluation. Access to administrative operations should be restricted to authorized users.
+
+The platform uses Supabase for its backend services and data management.
+
+---
+
+## Tech Stack
+
+| Technology | Purpose |
 |---|---|
-| `in_process` (default) | In Process |
-| `selected` | Selected |
-| `on_hold` | On Hold |
-| `rejected` | Rejected |
+| [Next.js](https://nextjs.org/) | React framework and application routing |
+| [React](https://react.dev/) | User interface |
+| [TypeScript](https://www.typescriptlang.org/) | Type-safe application development |
+| [Tailwind CSS](https://tailwindcss.com/) | Styling and responsive layouts |
+| [Supabase](https://supabase.com/) | Backend services and database |
+| [Vercel](https://vercel.com/) | Deployment platform |
 
-The values are enforced by a `CHECK` constraint and shared in `src/lib/selection.ts`. Status changes go through the `admin_set_team_status` database function, are audited, and can only be made server-side by an admin. Participants see only the status, never who changed it.
+---
 
-## Security model
+## Getting Started
 
-- Browsers get read-only, narrowly scoped access through RLS. All writes go through `service_role`-only database functions called from server actions.
-- Admin access is checked on the server for every page, action and export, using the `admin_users` table. Hiding a button is never the control.
-- Invite tokens are derived with an HMAC and only their SHA-256 hash is stored.
-- Rate limiting is stored in Postgres, so it works across serverless instances.
-- CSV exports are protected against spreadsheet formula injection.
-- The service-role key is only used on the server.
-
-## Getting started
+Follow these steps to run the project locally.
 
 ### Prerequisites
-- Node.js 20+
-- A Supabase project (or the Supabase CLI for local development)
 
-### 1. Install
+Make sure you have installed:
+
+- [Node.js](https://nodejs.org/) — a version compatible with the project's Next.js dependencies
+- npm
+- Git
+- A Supabase project with the required database configuration
+
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/k3rnel1/hacktoberfest-kashmir.git
+cd hacktoberfest-kashmir
+```
+
+### 2. Install dependencies
 
 ```bash
 npm install
 ```
 
-### 2. Environment variables
+### 3. Configure environment variables
 
-Create `.env.local`:
+Create a `.env.local` file in the project root.
 
-| Variable | Purpose |
-|---|---|
-| `NEXT_PUBLIC_SUPABASE_URL` | Supabase project URL |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` (or `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`) | Public client key |
-| `SUPABASE_SERVICE_ROLE_KEY` | Server-only key. Never expose it to the browser |
-| `INVITE_TOKEN_SECRET` | At least 32 characters. Changing it invalidates all invite links |
-| `NEXT_PUBLIC_SITE_URL` | Public site URL, used to build invite links (defaults to `http://localhost:3000`) |
-| `ADMIN_USERNAME`, `ADMIN_INITIAL_PASSWORD` | Used only by the admin bootstrap script |
+Add the environment variables required by the application. For a typical Supabase client setup, these may include:
 
-### 3. Database
-
-Apply the migrations in `supabase/migrations/` in order, using the Supabase CLI (`supabase db push`) or the SQL editor:
-
-1. `20261020000001_schema.sql` – tables, constraints, triggers
-2. `20261020000002_functions.sql` – team and admin database functions
-3. `20261020000003_rls.sql` – Row Level Security and privileges
-4. `20261022000001_team_selection_status.sql` – team selection phase
-5. `20261023000001_finalists.sql` – finalists and awards
-6. `20261023000002_team_matching.sql` – join requests, invitations and looking-for-team listings
-
-Existing teams become `in_process` when the last migration is applied.
-
-### 4. Create the first admin
-
-```bash
-npm run admin:bootstrap
+```env
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_publishable_key
 ```
 
-This creates the admin user and forces a password change at first login. Sign in at `/admin/login`.
+Use the exact variable names expected by the project's Supabase client configuration. If the project uses a different key format or additional environment variables, configure those accordingly.
 
-### 5. Run
+**Security:** Never commit `.env.local`, database passwords, or Supabase secret/service-role keys. Server-only secrets must never be exposed through `NEXT_PUBLIC_` variables.
+
+### 4. Start the development server
 
 ```bash
 npm run dev
 ```
 
-Open <http://localhost:3000>.
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-## Scripts
-
-| Command | Description |
-|---|---|
-| `npm run dev` | Start the dev server |
-| `npm run build` / `npm start` | Production build and server |
-| `npm run typecheck` | TypeScript check |
-| `npm run lint` | ESLint |
-| `npm run test:unit` | Unit checks (CSV sanitising, validation) |
-| `npm run admin:bootstrap` | Create the first admin |
-
-### Database tests
-
-Run against a database with all migrations applied:
+### 5. Build for production
 
 ```bash
-psql "$DATABASE_URL" -f supabase/tests/rls_and_rpc.sql      # RLS, RPCs, selection status
-psql "$DATABASE_URL" -f supabase/tests/team_matching.sql     # requests, invitations, listings
-PSQL="psql ..." bash supabase/tests/concurrency.sh           # concurrent-join invariants
-PSQL="psql ..." bash supabase/tests/matching_concurrency.sh  # concurrent accepts for the last seat
+npm run build
 ```
 
-The SQL test needs a Supabase-style `auth` schema (`auth.users`, `auth.uid()`) and the `anon`, `authenticated` and `service_role` roles. It rolls back after running.
+To run the production build locally:
 
-## Configuration
-
-Event details (name, date, venue, team size, contact email, social links) live in `src/config/event.ts`. Social links are shown in the footer when set. Keep `team.maxMembers` in sync with the `teams.max_members` default in the schema migration.
-
-## Project structure
-
+```bash
+npm run start
 ```
-src/
-  actions/        Server actions (auth, profile, teams, admin)
-  app/
-    (site)/       Participant pages: dashboard, team, join, settings
-    admin/        Admin panel: teams, participants, audit log, CSV export
-  components/     UI, forms, team and admin components
-  config/         Event configuration
-  lib/            Auth, validation, CSV, invites, rate limiting, selection statuses
-  proxy.ts        Session refresh and route protection
-supabase/
-  migrations/     Schema, functions, RLS, selection status
-  tests/          SQL and concurrency checks
-scripts/          Admin bootstrap and unit checks
+
+---
+
+## Project Structure
+
+The repository follows a Next.js application structure.
+
+```text
+hacktoberfest-kashmir/
+├── public/                 # Static assets
+├── scripts/                # Utility and project scripts
+├── src/                    # Application source code
+├── .gitignore              # Git exclusions
+├── AGENTS.md               # AI coding-agent instructions
+├── eslint.config.mjs       # ESLint configuration
+├── next-env.d.ts           # Next.js TypeScript definitions
+├── next.config.ts          # Next.js configuration
+├── package.json            # Dependencies and npm scripts
+├── package-lock.json       # Dependency lockfile
+├── tsconfig.json           # TypeScript configuration
+└── README.md               # Project documentation
 ```
+
+The exact contents of `src/` and `scripts/` may evolve as the platform develops.
+
+---
+
+## Database and Backend
+
+Supabase provides the backend infrastructure used by the application.
+
+When setting up a local environment:
+
+1. Configure the Supabase project credentials.
+2. Ensure the required database tables, relationships, and access policies are present.
+3. Configure authentication and authorization according to the application's implementation.
+4. Test team creation, join requests, invitations, and administrative workflows before deployment.
+
+Keep credentials and other sensitive configuration outside version control.
+
+If database migrations or Supabase configuration files are maintained separately, make sure the setup process documents how to apply them.
+
+---
 
 ## Deployment
 
-Deploy on Vercel and set the environment variables above for the production environment. Apply new migrations to the production database **before** deploying code that depends on them.
+The application can be deployed to [Vercel](https://vercel.com/) or another platform compatible with Next.js.
+
+A typical deployment workflow is:
+
+1. Import the GitHub repository into the deployment platform.
+2. Configure the required environment variables.
+3. Connect the appropriate Supabase project.
+4. Deploy the application.
+5. Verify participant workflows, database access, and administrative permissions in the deployed environment.
+
+Do not expose privileged backend credentials in client-side code.
+
+---
+
+## Development
+
+Install the dependencies and run the development server before making changes.
+
+```bash
+npm install
+npm run dev
+```
+
+Before submitting changes, run the available checks:
+
+```bash
+npm run lint
+npm run build
+```
+
+Check `package.json` for the exact scripts supported by the current version of the project.
+
+### Contribution Guidelines
+
+Contributions that improve usability, reliability, accessibility, performance, and team-management workflows are welcome.
+
+When contributing:
+
+1. Create a branch for your changes.
+2. Keep changes focused and easy to review.
+3. Test the affected workflows locally.
+4. Avoid committing environment files, generated build output, or credentials.
+5. Submit a pull request with a concise description of the changes.
+
+---
+
+## Security
+
+If you discover a security issue, avoid publishing credentials, personal participant information, or exploitable details in a public issue. Report the issue privately to the project maintainers.
+
+Administrative permissions and database access policies should be enforced by the backend, not solely by hiding interface elements.
+
+---
 
 ## License
 
-Add a license for the project here.
+No license has been specified in this README. Check the repository for an existing `LICENSE` file before adding or declaring a license.
+
+---
+
+**Hacktoberfest Kashmir** — bringing participants together to collaborate, build, and contribute to open source.
