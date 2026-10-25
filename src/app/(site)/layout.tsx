@@ -3,7 +3,11 @@ import { Footer } from "@/components/site/footer";
 import { Logo } from "@/components/site/logo";
 import { Navbar } from "@/components/site/navbar";
 
-export default function SiteLayout({ children }: { children: React.ReactNode }) {
+export default function SiteLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <>
       <Suspense
@@ -17,7 +21,9 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
       >
         <Navbar />
       </Suspense>
-      <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-8">{children}</main>
+      <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-8">
+        {children}
+      </main>
       <Footer />
     </>
   );

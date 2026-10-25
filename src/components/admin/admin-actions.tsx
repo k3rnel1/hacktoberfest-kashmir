@@ -2,9 +2,10 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { KeyRound, Link2Off, Trash2, UserMinus } from "lucide-react";
+import { KeyRound, Link2Off, Trash2, UserMinus, UserX } from "lucide-react";
 import { toast } from "sonner";
 import {
+  adminDeleteAccountAction,
   adminDissolveTeamAction,
   adminRemoveMemberAction,
   adminResetPasswordAction,
@@ -31,13 +32,29 @@ export function RemoveMemberButton({ userId, name }: { userId: string; name: str
     <ConfirmDialog
       trigger={
         <Button variant="outline" size="sm">
-          <UserMinus /> Remove
+          <UserMinus /> Remove from team
         </Button>
       }
       title={`Remove ${name} from their team?`}
       description="They will no longer be in any team and can create or join one again."
       confirmLabel="Remove from team"
       action={() => adminRemoveMemberAction(userId)}
+    />
+  );
+}
+
+export function DeleteAccountButton({ userId, username }: { userId: string; username: string }) {
+  return (
+    <ConfirmDialog
+      trigger={
+        <Button variant="destructive" size="sm">
+          <UserX /> Delete account
+        </Button>
+      }
+      title={`Delete the account of @${username}?`}
+      description="This permanently deletes their registration, profile, team membership, requests and notifications from the database. They can register again with a new account. This cannot be undone."
+      confirmLabel="Delete account"
+      action={() => adminDeleteAccountAction(userId)}
     />
   );
 }

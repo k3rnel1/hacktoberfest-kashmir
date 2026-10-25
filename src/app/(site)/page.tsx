@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { eventConfig, TBA } from "@/config/event";
 import { getSessionUser } from "@/lib/auth";
+import { getSettings } from "@/lib/settings";
 
 const steps = [
   {
@@ -40,6 +41,7 @@ const steps = [
 
 export default async function HomePage() {
   const user = await getSessionUser();
+  const settings = await getSettings();
 
   const details = [
     { icon: CalendarDays, label: "Date", value: eventConfig.date },
@@ -70,14 +72,18 @@ export default async function HomePage() {
             </Button>
           ) : (
             <>
-              <Button asChild size="lg">
-                <Link href="/register">
-                  Register now <ArrowRight />
-                </Link>
-              </Button>
-              <Button asChild size="lg" variant="outline">
-                <Link href="/login">Log in</Link>
-              </Button>
+              {settings.registrations_open && (
+                <Button asChild size="lg">
+                  <Link href="/register">
+                    Register now <ArrowRight />
+                  </Link>
+                </Button>
+              )}
+              {settings.participant_login_open && (
+                <Button asChild size="lg" variant="outline">
+                  <Link href="/login">Log in</Link>
+                </Button>
+              )}
             </>
           )}
         </div>

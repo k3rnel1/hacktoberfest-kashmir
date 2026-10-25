@@ -18,7 +18,8 @@ export type TeamDetail = {
   leader_id: string;
   max_members: number;
   created_at: string;
-  selection_status: SelectionStatus;
+  // null while the organizers have hidden selection statuses.
+  selection_status: SelectionStatus | null;
   selection_status_updated_at: string | null;
   members: TeamMember[];
 };

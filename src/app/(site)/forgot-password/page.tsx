@@ -3,10 +3,12 @@ import Link from "next/link";
 import { AuthCard } from "@/components/forms/auth-card";
 import { Button } from "@/components/ui/button";
 import { eventConfig } from "@/config/event";
+import { getSettings } from "@/lib/settings";
 
 export const metadata: Metadata = { title: "Forgot password" };
 
-export default function ForgotPasswordPage() {
+export default async function ForgotPasswordPage() {
+  const { participant_login_open } = await getSettings();
   return (
     <AuthCard
       title="Forgot your password?"
@@ -27,9 +29,10 @@ export default function ForgotPasswordPage() {
           with your username. They can issue a temporary password, and you will be asked to choose a
           new one the first time you log in.
         </p>
+        {participant_login_open && (
         <Button asChild variant="outline">
           <Link href="/login">Back to log in</Link>
-        </Button>
+        </Button>)}
       </div>
     </AuthCard>
   );

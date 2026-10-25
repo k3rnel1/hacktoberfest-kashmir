@@ -1,7 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Download, MessageSquare } from "lucide-react";
-import { RemoveMemberButton, ResetPasswordButton } from "@/components/admin/admin-actions";
+import {
+  DeleteAccountButton,
+  RemoveMemberButton,
+  ResetPasswordButton,
+} from "@/components/admin/admin-actions";
+import { SelectionBadge } from "@/components/selection-status";
 import { href, Pagination, SearchBar, SelectFilter, SortHeader } from "@/components/admin/list-controls";
 import { GmailLink, WhatsAppLink } from "@/components/admin/contact-links";
 import { Badge } from "@/components/ui/badge";
@@ -133,6 +138,7 @@ export default async function AdminUsersPage({
               <TH>
                 <SortHeader {...sortProps} label="Role" column="team_role" />
               </TH>
+              <TH>Selection</TH>
               <TH>
                 <SortHeader {...sortProps} label="Registered" column="created_at" />
               </TH>
@@ -201,6 +207,13 @@ export default async function AdminUsersPage({
                     <span className="text-muted">—</span>
                   )}
                 </TD>
+                <TD>
+                  {u.team_id && u.selection_status ? (
+                    <SelectionBadge status={u.selection_status} />
+                  ) : (
+                    <span className="text-muted">—</span>
+                  )}
+                </TD>
                 <TD className="whitespace-nowrap text-muted">{formatDate(u.created_at)}</TD>
                 <TD>
                   <Badge variant={u.profile_completed ? "success" : "default"}>
@@ -213,6 +226,7 @@ export default async function AdminUsersPage({
                       <RemoveMemberButton userId={u.id} name={u.full_name ?? u.username} />
                     )}
                     <ResetPasswordButton userId={u.id} username={u.username} />
+                    <DeleteAccountButton userId={u.id} username={u.username} />
                   </div>
                 </TD>
               </tr>

@@ -11,15 +11,15 @@ export const selectionStatusSchema = z.enum(SELECTION_STATUSES);
 export const SELECTION_LABELS: Record<SelectionStatus, string> = {
   in_process: "In Process",
   selected: "Selected",
-  on_hold: "On Hold",
-  rejected: "Rejected",
+  on_hold: "Under Review",
+  rejected: "Not Selected",
 };
 
 // Shown to participants on their dashboard and team page.
 export const SELECTION_MESSAGES: Record<SelectionStatus, string> = {
   in_process: "Your team is being reviewed. This page will update when a decision is made.",
   selected: "Congratulations! Your team has been selected for Hacktoberfest Kashmir.",
-  on_hold: "Your team's application is on hold for now. We will update this page if that changes.",
+  on_hold: "Your team's application is under review. We will update this page when a decision is made.",
   rejected: "Unfortunately, your team was not selected this time. Thank you for applying.",
 };
 

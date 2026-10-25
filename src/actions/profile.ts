@@ -12,6 +12,8 @@ import {
   type ActionResult,
 } from "@/lib/action";
 import { getActionUser, isAdmin } from "@/lib/auth";
+import { closedResult, lockdownResult } from "@/lib/settings";
+import { CLOSED_MESSAGES, LOCKDOWN_MESSAGE } from "@/lib/site-settings";
 import { rateLimit } from "@/lib/rate-limit";
 import { createClient } from "@/lib/supabase/server";
 import { profileSchema, safeNext } from "@/lib/validation";
@@ -20,6 +22,17 @@ export async function saveProfileAction(formData: FormData): Promise<ActionResul
   const session = await getActionUser();
   if (!session) return fail(SESSION_EXPIRED);
   if (await isAdmin(session.user.id)) return fail("Administrators do not have a participant profile.");
+
+  // Finishing a first-time profile is always allowed; editing a completed one can be
+  // switched off. The database enforces the same rule for direct API calls.
+  {
+    const locked = await lockdownResult();
+    if (locked) return locked;
+  }
+  if (session.profile.profile_completed) {
+    const closed = await closedResult("profile_editing_open");
+    if (closed) return closed;
+  }
 
   const raw = formToObject(formData);
   const parsed = profileSchema.safeParse(raw);
@@ -42,6 +55,8 @@ export async function saveProfileAction(formData: FormData): Promise<ActionResul
     .eq("id", session.user.id)
     .select("id");
 
+  if (error?.message === "LOCKDOWN") return fail(LOCKDOWN_MESSAGE);
+  if (error?.message === "PROFILE_EDITING_CLOSED") return fail(CLOSED_MESSAGES.profile_editing_open);
   if (error || !data?.length) return fail(GENERIC_ERROR);
 
   revalidatePath("/", "layout");

@@ -50,6 +50,7 @@ export type AdminTeamRow = {
   selection_status_updated_at: string | null;
   is_finalist: boolean;
   award: string | null;
+  project_repo_url: string | null;
   total_count: number;
 };
 
@@ -68,6 +69,8 @@ export type AdminTeamDetail = {
   is_finalist: boolean;
   award: string | null;
   award_rank: number | null;
+  project_repo_url: string | null;
+  project_repo_updated_at: string | null;
   members: {
     user_id: string;
     role: "leader" | "member";
@@ -124,6 +127,7 @@ export function parseUserFilters(sp: SP): UserFilters {
 
 export const USER_SORTS = ["created_at", "username", "full_name", "gmail", "team_name", "team_role", "profile_completed"] as const;
 export const TEAM_SORTS = ["created_at", "name", "leader_name", "member_count", "selection_status"] as const;
+export const FINALIST_SORTS = ["name", "leader_name", "created_at"] as const;
 
 export async function getStats(): Promise<AdminStats> {
   const { data, error } = await createAdminClient().rpc("admin_stats");
@@ -158,35 +162,50 @@ export function parseTeamStatusFilter(sp: SP) {
   return parseSelectionFilter(first(sp.status));
 }
 
-export async function listTeams(params: ListParams, status: SelectionStatus | "all" = "all") {
+// One page of teams. `paging` defaults to the admin list's page size; exports pass larger batches.
+export async function listTeamRows(
+  params: ListParams,
+  status: SelectionStatus | "all" = "all",
+  paging: { limit: number; offset: number } = {
+    limit: PAGE_SIZE,
+    offset: (params.page - 1) * PAGE_SIZE,
+  },
+) {
   const { data, error } = await createAdminClient().rpc("admin_list_teams", {
     p_q: params.q || null,
     p_sort: params.sort,
     p_dir: params.dir,
-    p_limit: PAGE_SIZE,
-    p_offset: (params.page - 1) * PAGE_SIZE,
+    p_limit: paging.limit,
+    p_offset: paging.offset,
     p_status: status,
   });
   if (error) throw new Error("Failed to load teams");
   const rows = (data ?? []) as AdminTeamRow[];
+  return { rows, total: Number(rows[0]?.total_count ?? 0) };
+}
 
-  // Member names for the rows on this page, in one query.
+// Member names for the given teams, in one query.
+export async function getMemberNames(teamIds: string[]) {
   const members = new Map<string, { name: string; role: string }[]>();
-  if (rows.length) {
-    const { data: memberRows } = await createAdminClient()
-      .from("team_members")
-      .select("team_id, role, joined_at, profiles(full_name, username)")
-      .in("team_id", rows.map((r) => r.id))
-      .order("joined_at");
-    for (const m of memberRows ?? []) {
-      const profile = Array.isArray(m.profiles) ? m.profiles[0] : m.profiles;
-      const list = members.get(m.team_id) ?? [];
-      list.push({ name: profile?.full_name ?? profile?.username ?? "—", role: m.role });
-      members.set(m.team_id, list);
-    }
+  if (!teamIds.length) return members;
+  const { data: memberRows } = await createAdminClient()
+    .from("team_members")
+    .select("team_id, role, joined_at, profiles(full_name, username)")
+    .in("team_id", teamIds)
+    .order("joined_at");
+  for (const m of memberRows ?? []) {
+    const profile = Array.isArray(m.profiles) ? m.profiles[0] : m.profiles;
+    const list = members.get(m.team_id) ?? [];
+    list.push({ name: profile?.full_name ?? profile?.username ?? "—", role: m.role });
+    members.set(m.team_id, list);
   }
+  return members;
+}
 
-  return { rows, total: Number(rows[0]?.total_count ?? 0), members };
+export async function listTeams(params: ListParams, status: SelectionStatus | "all" = "all") {
+  const { rows, total } = await listTeamRows(params, status);
+  const members = await getMemberNames(rows.map((r) => r.id));
+  return { rows, total, members };
 }
 
 export async function getTeam(teamId: string): Promise<AdminTeamDetail | null> {

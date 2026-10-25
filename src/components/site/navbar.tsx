@@ -3,20 +3,47 @@ import { Menu } from "lucide-react";
 import { logoutAction } from "@/actions/auth";
 import { Button } from "@/components/ui/button";
 import { getSessionUser, isAdmin } from "@/lib/auth";
+import { getPendingCount } from "@/lib/matching";
+import { getSettings } from "@/lib/settings";
+import { getUnreadNotificationCount } from "@/lib/notifications";
 import { Logo } from "./logo";
 
 export async function Navbar() {
   const user = await getSessionUser();
   const admin = user ? await isAdmin(user.id) : false;
 
-  const links = [
-    { href: "/finalists", label: "Finalists" },
+  const participant = Boolean(user) && !admin;
+  const settings = await getSettings();
+  const lockdown = settings.lockdown;
+  const [pending, unread] = participant && !lockdown
+    ? await Promise.all([getPendingCount(), getUnreadNotificationCount()])
+    : [0, 0];
+
+  const links: { href: string; label: string; badge?: number; badgeLabel?: string }[] = [
     ...(user
-    ? [
-        { href: admin ? "/admin" : "/dashboard", label: admin ? "Admin" : "Dashboard" },
-        ...(admin ? [] : [{ href: "/settings/profile", label: "Profile" }]),
-      ]
-    : []),
+      ? [
+          { href: admin ? "/admin" : "/dashboard", label: admin ? "Admin" : "Dashboard" },
+          ...(participant && !lockdown
+            ? [
+                {
+                  href: "/teams",
+                  label: "Teams",
+                  badge: pending,
+                  badgeLabel: `${pending} waiting for your answer`,
+                },
+                {
+                  href: "/teams/notifications",
+                  label: "Notifications",
+                  badge: unread,
+                  badgeLabel: `${unread} unread`,
+                },
+                settings.profile_editing_open
+                  ? { href: "/settings/profile", label: "Profile" }
+                  : { href: "/settings/password", label: "Password" },
+              ]
+            : []),
+        ]
+      : []),
   ];
 
   return (
@@ -27,7 +54,17 @@ export async function Navbar() {
         <nav aria-label="Main" className="hidden items-center gap-1 sm:flex">
           {links.map((link) => (
             <Button key={link.href} asChild variant="ghost" size="sm">
-              <Link href={link.href}>{link.label}</Link>
+              <Link href={link.href}>
+                {link.label}
+                {link.badge ? (
+                  <span
+                    className="ml-1.5 grid min-w-5 place-items-center rounded-full bg-primary px-1.5 text-xs font-semibold text-primary-foreground"
+                    aria-label={link.badgeLabel}
+                  >
+                    {link.badge}
+                  </span>
+                ) : null}
+              </Link>
             </Button>
           ))}
           {user ? (
@@ -38,12 +75,16 @@ export async function Navbar() {
             </form>
           ) : (
             <>
-              <Button asChild variant="ghost" size="sm">
-                <Link href="/login">Log in</Link>
-              </Button>
-              <Button asChild size="sm">
-                <Link href="/register">Register</Link>
-              </Button>
+              {settings.participant_login_open && (
+                <Button asChild variant="ghost" size="sm">
+                  <Link href="/login">Log in</Link>
+                </Button>
+              )}
+              {settings.registrations_open && (
+                <Button asChild size="sm">
+                  <Link href="/register">Register</Link>
+                </Button>
+              )}
             </>
           )}
         </nav>
@@ -60,9 +101,17 @@ export async function Navbar() {
               <Link
                 key={link.href}
                 href={link.href}
-                className="rounded-md px-3 py-2 text-sm hover:bg-surface-2"
+                className="flex items-center justify-between rounded-md px-3 py-2 text-sm hover:bg-surface-2"
               >
                 {link.label}
+                {link.badge ? (
+                  <span
+                    className="rounded-full bg-primary px-1.5 text-xs font-semibold text-primary-foreground"
+                    aria-label={link.badgeLabel}
+                  >
+                    {link.badge}
+                  </span>
+                ) : null}
               </Link>
             ))}
             {user ? (
@@ -76,15 +125,19 @@ export async function Navbar() {
               </form>
             ) : (
               <>
+                {settings.participant_login_open && (
                 <Link href="/login" className="rounded-md px-3 py-2 text-sm hover:bg-surface-2">
                   Log in
                 </Link>
-                <Link
+                )}
+                {settings.registrations_open && (
+<Link
                   href="/register"
                   className="rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground"
                 >
                   Register
                 </Link>
+                )}
               </>
             )}
           </div>

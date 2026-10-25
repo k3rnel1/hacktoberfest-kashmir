@@ -1,14 +1,20 @@
 import { Crown, ExternalLink } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { LinkedInLink } from "@/components/linkedin-link";
+import { KickMemberButton } from "@/components/team/team-actions";
 import { githubUrl, type TeamMember } from "@/lib/teams";
 import { initials } from "@/lib/utils";
 
 export function MemberList({
   members,
   currentUserId,
+  canRemove = false,
 }: {
   members: TeamMember[];
   currentUserId: string;
+  // True only for the team leader: shows a Remove button next to every other member.
+  // The database re-checks that the caller leads this team.
+  canRemove?: boolean;
 }) {
   return (
     <ul className="divide-y divide-border rounded-lg border border-border">
@@ -43,20 +49,15 @@ export function MemberList({
                   <span className="sr-only">GitHub profile (opens in a new tab)</span>
                 </a>
               )}
-              {member.linkedin_url && (
-                <a
-                  href={member.linkedin_url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 hover:text-primary"
-                >
-                  LinkedIn
-                  <ExternalLink className="size-3" aria-hidden />
-                  <span className="sr-only">LinkedIn profile (opens in a new tab)</span>
-                </a>
-              )}
+              <LinkedInLink
+                url={member.linkedin_url}
+                className="text-muted hover:text-primary hover:no-underline"
+              />
             </div>
           </div>
+          {canRemove && member.role !== "leader" && member.user_id !== currentUserId && (
+            <KickMemberButton userId={member.user_id} name={member.full_name ?? "this member"} />
+          )}
         </li>
       ))}
     </ul>

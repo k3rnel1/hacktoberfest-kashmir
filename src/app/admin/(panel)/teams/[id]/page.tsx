@@ -82,6 +82,29 @@ export default async function AdminTeamPage({ params }: { params: Promise<{ id: 
         />
       </Card>
 
+      <Card className="grid gap-2 p-4">
+        <h2 className="text-sm font-medium text-muted">Project repository</h2>
+        {team.project_repo_url ? (
+          <>
+            <a
+              href={team.project_repo_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="break-all text-primary hover:underline"
+            >
+              {team.project_repo_url}
+            </a>
+            {team.project_repo_updated_at && (
+              <p className="text-xs text-muted">
+                Last updated {formatDate(team.project_repo_updated_at)}
+              </p>
+            )}
+          </>
+        ) : (
+          <p className="text-sm text-muted">Nothing submitted yet.</p>
+        )}
+      </Card>
+
       <div className="grid gap-3 sm:grid-cols-3">
         <Card className="p-4">
           <p className="text-xs text-muted">Members</p>

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import { Crown, Users } from "lucide-react";
 import { JoinButton } from "@/components/join-button";
 import { Alert } from "@/components/ui/alert";
@@ -7,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { requireCompleteProfile } from "@/lib/auth";
 import { hashInviteToken } from "@/lib/invite";
+import { getSettings } from "@/lib/settings";
 import { getInvitePreview, getMyTeamId } from "@/lib/teams";
 import { INVITE_TOKEN_PATTERN } from "@/lib/validation";
 
@@ -36,6 +38,9 @@ function Problem({ message }: { message: string }) {
 
 export default async function JoinPage({ params }: { params: Promise<{ token: string }> }) {
   const { token } = await params;
+
+  // Switched off: invitation links open nothing.
+  if (!(await getSettings()).team_joining_open) notFound();
 
   // Signed-out visitors are sent to log in and returned here; incomplete profiles are
   // sent to complete their profile and returned here.

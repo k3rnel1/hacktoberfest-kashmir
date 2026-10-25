@@ -10,6 +10,8 @@ import {
   TOO_MANY,
   type ActionResult,
 } from "@/lib/action";
+import { closedResult, getSettings } from "@/lib/settings";
+import { CLOSED_MESSAGES } from "@/lib/site-settings";
 import { getActionUser, isAdmin } from "@/lib/auth";
 import { clientFingerprint, rateLimit } from "@/lib/rate-limit";
 import { createAdminClient, createVerifierClient } from "@/lib/supabase/admin";
@@ -26,6 +28,10 @@ import {
 const INVALID_CREDENTIALS = "Invalid username or password.";
 
 export async function registerAction(formData: FormData): Promise<ActionResult> {
+  {
+    const closed = await closedResult("registrations_open");
+    if (closed) return closed;
+  }
   const raw = formToObject(formData);
   const parsed = registerSchema.safeParse(raw);
   if (!parsed.success) return invalid(parsed.error);
@@ -106,6 +112,12 @@ export async function loginAction(formData: FormData): Promise<ActionResult> {
   if (!outcome.ok) return outcome.result;
 
   if (await isAdmin(outcome.userId)) redirect("/admin");
+
+  // Logins can be paused by the organizers (administrators are exempt).
+  if (!(await getSettings()).participant_login_open) {
+    await outcome.supabase.auth.signOut();
+    return fail(CLOSED_MESSAGES.participant_login_open);
+  }
   redirect(safeNext(outcome.raw.next));
 }
 

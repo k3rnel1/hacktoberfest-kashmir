@@ -1,12 +1,16 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import { AuthCard } from "@/components/forms/auth-card";
 import { ProfileForm } from "@/components/forms/profile-form";
 import { requireCompleteProfile } from "@/lib/auth";
+import { getSettings } from "@/lib/settings";
 
 export const metadata: Metadata = { title: "Edit profile" };
 
 export default async function ProfileSettingsPage() {
+  // Switched off: the page does not exist.
+  if (!(await getSettings()).profile_editing_open) notFound();
   const { profile } = await requireCompleteProfile("/settings/profile");
 
   return (
@@ -15,7 +19,10 @@ export default async function ProfileSettingsPage() {
       description={`Signed in as @${profile.username}. Your username cannot be changed.`}
       footer={
         <>
-          <Link href="/settings/password" className="text-primary hover:underline">
+          <Link
+            href="/settings/password"
+            className="text-primary hover:underline"
+          >
             Change password
           </Link>
           {" · "}

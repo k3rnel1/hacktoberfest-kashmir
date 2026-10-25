@@ -1,8 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { Crown, LogOut, Trash2 } from "lucide-react";
-import { dissolveTeamAction, leaveTeamAction, transferLeadershipAction } from "@/actions/teams";
+import { Crown, LogOut, Trash2, UserMinus } from "lucide-react";
+import {
+  dissolveTeamAction,
+  kickMemberAction,
+  leaveTeamAction,
+  transferLeadershipAction,
+} from "@/actions/teams";
 import { ConfirmDialog } from "@/components/confirm-dialog";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -19,6 +24,23 @@ export function LeaveTeamButton() {
       description="You will be removed from the team. You can join a team again later with an invitation link."
       confirmLabel="Leave team"
       action={leaveTeamAction}
+    />
+  );
+}
+
+export function KickMemberButton({ userId, name }: { userId: string; name: string }) {
+  return (
+    <ConfirmDialog
+      trigger={
+        <Button variant="outline" size="sm" className="text-destructive">
+          <UserMinus /> Remove
+          <span className="sr-only"> {name} from the team</span>
+        </Button>
+      }
+      title={`Remove ${name} from your team?`}
+      description={`${name} will be taken off the team and notified. They will not be able to rejoin with your invitation link or by sending a request, but you can still invite them directly later.`}
+      confirmLabel="Remove member"
+      action={() => kickMemberAction(userId)}
     />
   );
 }

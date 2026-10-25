@@ -12,12 +12,13 @@ const VARIANT = {
   rejected: "destructive",
 } as const satisfies Record<SelectionStatus, "default" | "success" | "warning" | "destructive">;
 
-export function SelectionBadge({ status }: { status: SelectionStatus }) {
+export function SelectionBadge({ status }: { status: SelectionStatus | null }) {
+  if (!status) return <Badge variant="default">Not announced yet</Badge>;
   return <Badge variant={VARIANT[status]}>{SELECTION_LABELS[status]}</Badge>;
 }
 
 // Participant-facing banner: current status plus a short explanation.
-export function SelectionStatusCard({ status }: { status: SelectionStatus }) {
+export function SelectionStatusCard({ status }: { status: SelectionStatus | null }) {
   return (
     <section
       aria-labelledby="selection-heading"
@@ -30,7 +31,9 @@ export function SelectionStatusCard({ status }: { status: SelectionStatus }) {
         <SelectionBadge status={status} />
       </div>
       <p className="mt-2 text-sm" role="status">
-        {SELECTION_MESSAGES[status]}
+        {status
+          ? SELECTION_MESSAGES[status]
+          : "Selection results have not been announced yet. Check back soon."}
       </p>
     </section>
   );

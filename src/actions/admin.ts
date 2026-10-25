@@ -7,6 +7,7 @@ import { getActionAdmin, isAdmin } from "@/lib/auth";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { finalistSchema } from "@/lib/finalist-schema";
 import { selectionLabel, selectionStatusSchema } from "@/lib/selection";
+import { settingsChangeSchema } from "@/lib/site-settings";
 import { uuidSchema } from "@/lib/validation";
 
 // Every action re-verifies the caller is an administrator on the server. The UI
@@ -17,6 +18,29 @@ async function guard(id: string) {
   if (!session) return { ok: false, result: fail(SESSION_EXPIRED) } as const;
   if (!uuidSchema.safeParse(id).success) return { ok: false, result: fail(GENERIC_ERROR) } as const;
   return { ok: true, adminId: session.user.id } as const;
+}
+
+// Organizer controls: any subset of the switches and the announcement banner. The
+// database function validates the keys again and records what changed in the audit log.
+export async function adminUpdateSettingsAction(changes: unknown): Promise<ActionResult> {
+  const session = await getActionAdmin();
+  if (!session) return fail(SESSION_EXPIRED);
+
+  const parsed = settingsChangeSchema.safeParse(changes);
+  if (!parsed.success) {
+    return fail(parsed.error.issues[0]?.message ?? GENERIC_ERROR);
+  }
+  if (Object.keys(parsed.data).length === 0) return { ok: true };
+
+  const { error } = await createAdminClient().rpc("admin_update_settings", {
+    p_admin_id: session.user.id,
+    p_changes: parsed.data,
+  });
+  if (error) return fail(dbError(error.message));
+
+  // Settings affect every page, for participants and visitors alike.
+  revalidatePath("/", "layout");
+  return { ok: true, message: "Settings saved." };
 }
 
 export async function adminRemoveMemberAction(userId: string): Promise<ActionResult> {
@@ -31,6 +55,23 @@ export async function adminRemoveMemberAction(userId: string): Promise<ActionRes
 
   revalidatePath("/admin", "layout");
   return { ok: true, message: "Member removed from the team." };
+}
+
+// Permanently deletes a participant's account. The database function refuses admin
+// accounts and leaders whose team still has other members.
+export async function adminDeleteAccountAction(userId: string): Promise<ActionResult> {
+  const g = await guard(userId);
+  if (!g.ok) return g.result;
+  if (g.adminId === userId) return fail("You cannot delete your own account here.");
+
+  const { error } = await createAdminClient().rpc("admin_delete_account", {
+    p_admin_id: g.adminId,
+    p_user_id: userId,
+  });
+  if (error) return fail(dbError(error.message));
+
+  revalidatePath("/admin", "layout");
+  return { ok: true, message: "Account deleted." };
 }
 
 export async function adminRevokeInviteAction(teamId: string): Promise<ActionResult> {

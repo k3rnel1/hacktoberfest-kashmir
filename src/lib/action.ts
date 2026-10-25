@@ -47,6 +47,24 @@ const DB_ERRORS: Record<string, string> = {
   TEAM_NOT_FOUND: "That team no longer exists.",
   INVALID_STATUS: "Choose a valid selection status.",
   NOT_SELECTED: "Only teams with the Selected status can be finalists.",
+  DUPLICATE_REQUEST: "There is already a pending request or invitation between you and this team.",
+  REQUEST_NOT_FOUND: "That request no longer exists.",
+  REQUEST_NOT_PENDING: "That request has already been answered or cancelled.",
+  TARGET_NOT_LOOKING: "This participant is no longer looking for a team.",
+  TARGET_UNAVAILABLE: "This participant has already joined a team.",
+  CANNOT_REMOVE_SELF:
+    "You cannot remove yourself. Transfer leadership to another member or dissolve the team.",
+  MEMBER_NOT_FOUND: "That person is no longer a member of your team.",
+  SUBMISSIONS_CLOSED: "Project submissions are not open right now.",
+  PROJECT_NOT_SELECTED: "Only selected teams can submit a project.",
+  INVALID_REPO_URL: "Use a link like https://github.com/your-name/your-project",
+  LOCKDOWN: "Time is up. The event is closed and no more interaction is allowed on the site.",
+  USER_NOT_FOUND: "That account no longer exists.",
+  ADMIN_ACCOUNT: "Administrator accounts cannot be deleted here.",
+  LEADER_HAS_TEAM:
+    "This participant leads a team that still has other members. Dissolve the team first, then delete the account.",
+  REMOVED_FROM_TEAM:
+    "The leader of this team removed you from it, so you cannot rejoin with a link or request. Ask the leader to invite you directly.",
 };
 
 export function dbError(message: string | undefined): string {

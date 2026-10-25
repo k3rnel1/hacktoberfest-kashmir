@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Link2Off } from "lucide-react";
-import { Pagination, SearchBar, SelectFilter, SortHeader } from "@/components/admin/list-controls";
+import { Download, Link2Off } from "lucide-react";
+import { href, Pagination, SearchBar, SelectFilter, SortHeader } from "@/components/admin/list-controls";
+import { Button } from "@/components/ui/button";
 import { SelectionBadge } from "@/components/selection-status";
 import { Badge } from "@/components/ui/badge";
 import { Table, TBody, TD, TH, THead } from "@/components/ui/table";
@@ -27,9 +28,25 @@ export default async function AdminTeamsPage({
 
   return (
     <div className="grid gap-5">
-      <div>
-        <h1 className="text-3xl font-semibold tracking-tight">Teams</h1>
-        <p className="mt-1 text-sm text-muted">{total} total</p>
+      <div className="flex flex-wrap items-end justify-between gap-3">
+        <div>
+          <h1 className="text-3xl font-semibold tracking-tight">Teams</h1>
+          <p className="mt-1 text-sm text-muted">{total} total</p>
+        </div>
+        <Button asChild variant="outline">
+          {/* A plain link: the export is a file download from a server route. */}
+          <a
+            href={href("/admin/teams/export", {
+              q: params.q,
+              sort: params.sort,
+              dir: params.dir,
+              status,
+            })}
+            download
+          >
+            <Download /> Export CSV
+          </a>
+        </Button>
       </div>
 
       <SearchBar
