@@ -44,9 +44,13 @@ export default async function HomePage() {
   const settings = await getSettings();
 
   const details = [
-    { icon: CalendarDays, label: "Date", value: eventConfig.date },
-    { icon: MapPin, label: "Venue", value: eventConfig.venue },
-    { icon: Timer, label: "Registration deadline", value: eventConfig.registrationDeadline },
+    { icon: CalendarDays, label: "Date", value: settings.event_date ?? eventConfig.date },
+    { icon: MapPin, label: "Venue", value: settings.event_venue ?? eventConfig.venue },
+    {
+      icon: Timer,
+      label: "Registration deadline",
+      value: settings.event_registration_deadline ?? eventConfig.registrationDeadline,
+    },
     { icon: Users, label: "Team size", value: `Up to ${eventConfig.team.maxMembers} members` },
   ];
 

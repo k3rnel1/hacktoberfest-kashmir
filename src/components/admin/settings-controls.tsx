@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input, Textarea } from "@/components/ui/input";
 import { GENERIC_ERROR } from "@/lib/action";
+import { eventConfig } from "@/config/event";
 import {
   BROADCAST_AUDIENCES,
   SETTING_GROUPS,
@@ -233,6 +234,72 @@ function LockdownCard({ active }: { active: boolean }) {
   );
 }
 
+const EVENT_FIELDS = [
+  { key: "event_date", label: "Date", fallback: eventConfig.date },
+  { key: "event_venue", label: "Venue", fallback: eventConfig.venue },
+  {
+    key: "event_registration_deadline",
+    label: "Registration deadline",
+    fallback: eventConfig.registrationDeadline,
+  },
+] as const;
+
+function EventDetails({ settings }: { settings: SiteSettings }) {
+  const [values, setValues] = useState<Record<string, string>>(() =>
+    Object.fromEntries(EVENT_FIELDS.map((f) => [f.key, settings[f.key] ?? ""])),
+  );
+  const { save, pending } = useSave();
+  const dirty = EVENT_FIELDS.some(
+    (f) => values[f.key].trim() !== (settings[f.key] ?? ""),
+  );
+
+  return (
+    <Card className="grid gap-3 p-5">
+      <div>
+        <h2 className="text-lg font-semibold">Event details</h2>
+        <p className="mt-1 text-sm text-muted">
+          The date, venue and registration deadline shown on the home page.
+          Leave a field empty to show its default. Team size always follows the
+          real team limit.
+        </p>
+      </div>
+      {EVENT_FIELDS.map((f) => (
+        <label key={f.key} className="grid gap-1 text-sm">
+          <span className="text-muted">{f.label}</span>
+          <Input
+            value={values[f.key]}
+            onChange={(e) =>
+              setValues((v) => ({ ...v, [f.key]: e.target.value }))
+            }
+            maxLength={100}
+            placeholder={`Default: ${f.fallback}`}
+            disabled={pending}
+          />
+        </label>
+      ))}
+      <div>
+        <Button
+          size="sm"
+          loading={pending}
+          disabled={!dirty}
+          onClick={() =>
+            save(
+              Object.fromEntries(
+                EVENT_FIELDS.map((f) => [
+                  f.key,
+                  values[f.key].trim() === "" ? null : values[f.key].trim(),
+                ]),
+              ),
+            )
+          }
+        >
+          Save event details
+        </Button>
+      </div>
+    </Card>
+  );
+}
+
 function SendNotification() {
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
@@ -428,6 +495,11 @@ export function SettingsControls({ settings }: { settings: SiteSettings }) {
           </ul>
         </Card>
       ))}
+
+      <EventDetails
+        key={EVENT_FIELDS.map((f) => settings[f.key] ?? "").join("|")}
+        settings={settings}
+      />
 
       <Announcement
         key={settings.announcement ?? ""}

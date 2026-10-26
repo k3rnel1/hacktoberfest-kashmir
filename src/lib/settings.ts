@@ -4,6 +4,7 @@ import { fail, type ActionResult } from "@/lib/action";
 import { createAdminClient } from "@/lib/supabase/admin";
 import {
   DEFAULT_SETTINGS,
+  EVENT_DETAIL_KEYS,
   LOCK_ALL_KEYS,
   LOCKDOWN_MESSAGE,
   closedMessage,
@@ -21,7 +22,7 @@ export const getStoredSettings = cache(async (): Promise<SiteSettings> => {
     const { data, error } = await createAdminClient()
       .from("site_settings")
       .select(
-        [...SETTING_KEYS, "announcement", "lockdown", "registrations_close_at", "lockdown_at"].join(", "),
+        [...SETTING_KEYS, "announcement", "lockdown", "registrations_close_at", "lockdown_at", ...EVENT_DETAIL_KEYS].join(", "),
       )
       .eq("id", true)
       .maybeSingle();

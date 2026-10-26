@@ -26,6 +26,10 @@ export type SiteSettings = Record<SettingKey, boolean> & {
   // ISO timestamps. Registrations close by themselves at the first, lockdown starts at the second.
   registrations_close_at: string | null;
   lockdown_at: string | null;
+  // Home page "event details" overrides. null means use src/config/event.ts.
+  event_date: string | null;
+  event_venue: string | null;
+  event_registration_deadline: string | null;
 };
 
 export const LOCKDOWN_MESSAGE =
@@ -48,6 +52,9 @@ export const DEFAULT_SETTINGS: SiteSettings = {
   lockdown: false,
   registrations_close_at: null,
   lockdown_at: null,
+  event_date: null,
+  event_venue: null,
+  event_registration_deadline: null,
 };
 
 // Shown to participants when they try something that is currently switched off.
@@ -196,6 +203,12 @@ export const broadcastSchema = z.object({
   audience: z.enum(["all", "selected", "leaders"]),
 });
 
+export const EVENT_DETAIL_KEYS = ["event_date", "event_venue", "event_registration_deadline"] as const;
+const eventTextSchema = z
+  .string()
+  .transform((v) => v.trim())
+  .pipe(z.string().max(100, "Use at most 100 characters."));
+
 export const announcementSchema = z
   .string()
   .transform((v) => v.trim())
@@ -216,6 +229,9 @@ export const settingsChangeSchema = z
     project_submissions_open: z.boolean(),
     registrations_close_at: z.union([z.string().datetime({ offset: true }), z.null()]),
     lockdown_at: z.union([z.string().datetime({ offset: true }), z.null()]),
+    event_date: z.union([eventTextSchema, z.null()]),
+    event_venue: z.union([eventTextSchema, z.null()]),
+    event_registration_deadline: z.union([eventTextSchema, z.null()]),
     announcement: z.union([announcementSchema, z.null()]),
   })
   .partial()
