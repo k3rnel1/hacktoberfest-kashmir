@@ -7,7 +7,7 @@ import { getActionAdmin, isAdmin } from "@/lib/auth";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { finalistSchema } from "@/lib/finalist-schema";
 import { selectionLabel, selectionStatusSchema } from "@/lib/selection";
-import { settingsChangeSchema } from "@/lib/site-settings";
+import { broadcastSchema, settingsChangeSchema } from "@/lib/site-settings";
 import { uuidSchema } from "@/lib/validation";
 
 // Every action re-verifies the caller is an administrator on the server. The UI
@@ -41,6 +41,30 @@ export async function adminUpdateSettingsAction(changes: unknown): Promise<Actio
   // Settings affect every page, for participants and visitors alike.
   revalidatePath("/", "layout");
   return { ok: true, message: "Settings saved." };
+}
+
+// Sends an in-website notification to a group of participants. It appears in their
+// Notifications tab and unread badge; nothing is emailed.
+export async function adminBroadcastNotificationAction(input: unknown): Promise<ActionResult> {
+  const session = await getActionAdmin();
+  if (!session) return fail(SESSION_EXPIRED);
+
+  const parsed = broadcastSchema.safeParse(input);
+  if (!parsed.success) return fail(parsed.error.issues[0]?.message ?? GENERIC_ERROR);
+
+  const { data, error } = await createAdminClient().rpc("admin_broadcast_notification", {
+    p_admin_id: session.user.id,
+    p_title: parsed.data.title,
+    p_body: parsed.data.body,
+    p_audience: parsed.data.audience,
+  });
+  if (error) return fail(dbError(error.message));
+
+  const count = Number(data ?? 0);
+  return {
+    ok: true,
+    message: `Notification sent to ${count} ${count === 1 ? "participant" : "participants"}.`,
+  };
 }
 
 export async function adminRemoveMemberAction(userId: string): Promise<ActionResult> {

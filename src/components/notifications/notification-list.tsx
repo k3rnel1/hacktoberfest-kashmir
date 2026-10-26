@@ -14,6 +14,7 @@ import {
   UserMinus,
   UserPlus,
   UserX,
+  Megaphone,
   type LucideIcon,
 } from "lucide-react";
 import { toast } from "sonner";
@@ -43,6 +44,7 @@ const KINDS: Record<string, { icon: LucideIcon; tone: Tone }> = {
   leadership_transferred: { icon: Crown, tone: "primary" },
   team_dissolved: { icon: Trash2, tone: "danger" },
   selection_status: { icon: Trophy, tone: "primary" },
+  announcement: { icon: Megaphone, tone: "primary" },
 };
 
 const TONE_CLASSES: Record<Tone, string> = {

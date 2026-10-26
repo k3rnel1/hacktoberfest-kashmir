@@ -178,6 +178,24 @@ export const LOCK_ALL_KEYS: SettingKey[] = [
   "project_submissions_open",
 ];
 
+export const BROADCAST_AUDIENCES = [
+  { value: "all", label: "All participants" },
+  { value: "selected", label: "Members of selected teams" },
+  { value: "leaders", label: "Team leaders" },
+] as const;
+
+export const broadcastSchema = z.object({
+  title: z
+    .string()
+    .transform((v) => v.trim())
+    .pipe(z.string().min(1, "Add a title.").max(120, "Use at most 120 characters.")),
+  body: z
+    .string()
+    .transform((v) => v.trim())
+    .pipe(z.string().max(500, "Use at most 500 characters.")),
+  audience: z.enum(["all", "selected", "leaders"]),
+});
+
 export const announcementSchema = z
   .string()
   .transform((v) => v.trim())

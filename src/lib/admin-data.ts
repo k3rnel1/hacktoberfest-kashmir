@@ -127,7 +127,9 @@ export function parseUserFilters(sp: SP): UserFilters {
 
 export const USER_SORTS = ["created_at", "username", "full_name", "gmail", "team_name", "team_role", "profile_completed"] as const;
 export const TEAM_SORTS = ["created_at", "name", "leader_name", "member_count", "selection_status"] as const;
-export const FINALIST_SORTS = ["name", "leader_name", "created_at"] as const;
+export const SELECTED_TEAM_SORTS = ["name", "leader_name", "created_at"] as const;
+// Old name, kept so a leftover copy of the earlier Finalists page still compiles.
+export const FINALIST_SORTS = SELECTED_TEAM_SORTS;
 
 export async function getStats(): Promise<AdminStats> {
   const { data, error } = await createAdminClient().rpc("admin_stats");

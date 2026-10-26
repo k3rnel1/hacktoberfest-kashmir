@@ -4,14 +4,18 @@ import { useEffect, useState, useTransition } from "react";
 import { useRouter, unstable_rethrow } from "next/navigation";
 import { Lock, LockOpen } from "lucide-react";
 import { toast } from "sonner";
-import { adminUpdateSettingsAction } from "@/actions/admin";
+import {
+  adminBroadcastNotificationAction,
+  adminUpdateSettingsAction,
+} from "@/actions/admin";
 import { ConfirmDialog } from "@/components/confirm-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
+import { Input, Textarea } from "@/components/ui/input";
 import { GENERIC_ERROR } from "@/lib/action";
 import {
+  BROADCAST_AUDIENCES,
   SETTING_GROUPS,
   type SettingKey,
   type SiteSettings,
@@ -217,12 +221,88 @@ function LockdownCard({ active }: { active: boolean }) {
         confirmLabel={active ? "Lift lockdown" : "Start lockdown"}
         action={async () => {
           const result = await adminUpdateSettingsAction(
-            active ? { lockdown: false, lockdown_at: null } : { lockdown: true },
+            active
+              ? { lockdown: false, lockdown_at: null }
+              : { lockdown: true },
           );
           router.refresh();
           return result;
         }}
       />
+    </Card>
+  );
+}
+
+function SendNotification() {
+  const [title, setTitle] = useState("");
+  const [body, setBody] = useState("");
+  const [audience, setAudience] = useState<string>("all");
+  const label =
+    BROADCAST_AUDIENCES.find((a) => a.value === audience)?.label ?? "";
+
+  return (
+    <Card className="grid gap-3 p-5">
+      <div>
+        <h2 className="text-lg font-semibold">Send a notification</h2>
+        <p className="mt-1 text-sm text-muted">
+          Appears in the Notifications tab of the chosen participants, with an
+          unread badge. It is not emailed and cannot be recalled once sent.
+        </p>
+      </div>
+      <label className="grid gap-1 text-sm">
+        <span className="text-muted">Title</span>
+        <Input
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          maxLength={120}
+        />
+      </label>
+      <label className="grid gap-1 text-sm">
+        <span className="text-muted">Message (optional)</span>
+        <Textarea
+          value={body}
+          onChange={(e) => setBody(e.target.value)}
+          maxLength={500}
+          rows={3}
+        />
+      </label>
+      <label className="grid gap-1 text-sm">
+        <span className="text-muted">Send to</span>
+        <select
+          value={audience}
+          onChange={(e) => setAudience(e.target.value)}
+          className="h-10 w-fit rounded-md border border-border bg-surface px-2 text-sm text-foreground"
+        >
+          {BROADCAST_AUDIENCES.map((a) => (
+            <option key={a.value} value={a.value}>
+              {a.label}
+            </option>
+          ))}
+        </select>
+      </label>
+      <div>
+        <ConfirmDialog
+          destructive={false}
+          trigger={
+            <Button disabled={title.trim() === ""}>Send notification</Button>
+          }
+          title="Send this notification?"
+          description={`“${title.trim()}” will be sent to: ${label}. This cannot be undone.`}
+          confirmLabel="Send"
+          action={async () => {
+            const result = await adminBroadcastNotificationAction({
+              title,
+              body,
+              audience,
+            });
+            if (result.ok) {
+              setTitle("");
+              setBody("");
+            }
+            return result;
+          }}
+        />
+      </div>
     </Card>
   );
 }
@@ -258,7 +338,11 @@ function ScheduleRow({
     <li className="grid gap-2 py-4">
       <p className="flex flex-wrap items-center gap-2 font-medium">
         {label}
-        {stored && <Badge variant={passed ? "destructive" : "warning"}>{passed ? "Has happened" : "Scheduled"}</Badge>}
+        {stored && (
+          <Badge variant={passed ? "destructive" : "warning"}>
+            {passed ? "Has happened" : "Scheduled"}
+          </Badge>
+        )}
       </p>
       <p className="text-sm text-muted">{description}</p>
       <div className="flex flex-wrap gap-2">
@@ -301,8 +385,8 @@ function Schedules({ settings }: { settings: SiteSettings }) {
     <Card className="p-5">
       <h2 className="text-lg font-semibold">Schedules</h2>
       <p className="mt-1 text-sm text-muted">
-        Switch things off automatically at a set time, in your local time zone. Clear a time to
-        cancel it or to reopen after it has passed.
+        Switch things off automatically at a set time, in your local time zone.
+        Clear a time to cancel it or to reopen after it has passed.
       </p>
       <ul className="mt-2 divide-y divide-border">
         <ScheduleRow
@@ -323,7 +407,6 @@ function Schedules({ settings }: { settings: SiteSettings }) {
 }
 
 export function SettingsControls({ settings }: { settings: SiteSettings }) {
-
   return (
     <div className="grid gap-6">
       <LockdownCard active={settings.lockdown} />
@@ -350,6 +433,8 @@ export function SettingsControls({ settings }: { settings: SiteSettings }) {
         key={settings.announcement ?? ""}
         current={settings.announcement}
       />
+
+      <SendNotification />
     </div>
   );
 }
