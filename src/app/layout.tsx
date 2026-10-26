@@ -3,16 +3,18 @@ import { GeistSans } from "geist/font/sans";
 import { GeistMono } from "geist/font/mono";
 import { Toaster } from "sonner";
 import { eventConfig } from "@/config/event";
+import { getSettings } from "@/lib/settings";
+import { branding } from "@/lib/site-settings";
 import "./globals.css";
 
-export const metadata: Metadata = {
-  title: {
-    default: `${eventConfig.name} — Registration`,
-    template: `%s · ${eventConfig.name}`,
-  },
-  description: eventConfig.description,
-  metadataBase: new URL(eventConfig.appUrl),
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const brand = branding(await getSettings());
+  return {
+    title: { default: brand.title, template: `%s · ${brand.name}` },
+    description: brand.description,
+    metadataBase: new URL(eventConfig.appUrl),
+  };
+}
 
 export const viewport: Viewport = {
   themeColor: "#0a0a0b",

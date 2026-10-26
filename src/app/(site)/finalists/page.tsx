@@ -2,15 +2,15 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { FinalistsList } from "@/components/finalists-list";
 import { Badge } from "@/components/ui/badge";
-import { eventConfig } from "@/config/event";
 import { FinalistsLocked } from "@/components/finalists-locked";
 import { getFinalists, getFinalistsAccess } from "@/lib/finalists";
 import { getSettings } from "@/lib/settings";
+import { branding } from "@/lib/site-settings";
 
-export const metadata: Metadata = {
-  title: "Finalists",
-  description: `Finalist and winning teams of ${eventConfig.name}.`,
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const { name } = branding(await getSettings());
+  return { title: "Finalists", description: `Finalist and winning teams of ${name}.` };
+}
 
 // Always fresh: admins update awards on the day of the event.
 export const dynamic = "force-dynamic";
@@ -26,7 +26,7 @@ export default async function FinalistsPage() {
     <div className="grid gap-10">
       <div>
         <Badge variant="primary" className="mb-4 font-mono">
-          {eventConfig.name}
+          {branding(settings).name}
         </Badge>
         <h1 className="text-4xl font-semibold tracking-tight">Finalists</h1>
         <p className="mt-2 max-w-2xl text-muted">

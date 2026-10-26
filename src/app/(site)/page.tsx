@@ -15,7 +15,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { eventConfig, TBA } from "@/config/event";
 import { getSessionUser } from "@/lib/auth";
 import { getSettings } from "@/lib/settings";
-import { teamSize } from "@/lib/site-settings";
+import { branding, teamSize } from "@/lib/site-settings";
 
 const getSteps = (size: number) => [
   {
@@ -43,6 +43,7 @@ const getSteps = (size: number) => [
 export default async function HomePage() {
   const user = await getSessionUser();
   const settings = await getSettings();
+  const brand = branding(settings);
   const steps = getSteps(teamSize(settings));
 
   const details: {
@@ -71,14 +72,14 @@ export default async function HomePage() {
       <section className="relative isolate overflow-hidden rounded-2xl border border-border px-6 py-16 sm:px-12 sm:py-24">
         <div className="grid-bg absolute inset-0 -z-10" aria-hidden />
         <Badge variant="primary" className="mb-6 font-mono">
-          <span className="size-1.5 rounded-full bg-primary" aria-hidden /> In Collaboration with BUILDFEST KASHMIR
+          <span className="size-1.5 rounded-full bg-primary" aria-hidden /> {brand.badge}
         </Badge>
         <h1 className="max-w-3xl text-4xl font-semibold tracking-tight sm:text-6xl">
-          {eventConfig.name}
+          {brand.name}
           <span className="text-primary">.</span>
         </h1>
-        <p className="mt-3 text-xl text-muted sm:text-2xl">{eventConfig.tagline}</p>
-        <p className="mt-6 max-w-2xl text-muted">{eventConfig.description}</p>
+        <p className="mt-3 text-xl text-muted sm:text-2xl">{brand.tagline}</p>
+        <p className="mt-6 max-w-2xl text-muted">{brand.description}</p>
         <div className="mt-8 flex flex-wrap gap-3">
           {user ? (
             <Button asChild size="lg">

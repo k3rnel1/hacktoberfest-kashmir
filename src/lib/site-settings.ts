@@ -34,6 +34,13 @@ export type SiteSettings = Record<SettingKey, boolean> & {
   event_venue_map_url: string | null;
   // Team size limit set by the organizers. null means the default in src/config/event.ts.
   team_max_members: number | null;
+  // Website text overrides. null means the default (see branding() below).
+  site_name: string | null;
+  site_title: string | null;
+  hero_badge: string | null;
+  tagline: string | null;
+  site_description: string | null;
+  footer_text: string | null;
 };
 
 export const LOCKDOWN_MESSAGE =
@@ -61,6 +68,12 @@ export const DEFAULT_SETTINGS: SiteSettings = {
   event_registration_deadline: null,
   event_venue_map_url: null,
   team_max_members: null,
+  site_name: null,
+  site_title: null,
+  hero_badge: null,
+  tagline: null,
+  site_description: null,
+  footer_text: null,
 };
 
 // Shown to participants when they try something that is currently switched off.
@@ -231,6 +244,47 @@ const mapUrlSchema = z
       .refine((v) => v === "" || /^https:\/\/\S+$/.test(v), "Use a link that starts with https://"),
   );
 
+export const BRANDING_KEYS = [
+  "site_name",
+  "site_title",
+  "hero_badge",
+  "tagline",
+  "site_description",
+  "footer_text",
+] as const;
+export type BrandingKey = (typeof BRANDING_KEYS)[number];
+
+export const BRANDING_LIMITS: Record<BrandingKey, number> = {
+  site_name: 60,
+  site_title: 100,
+  hero_badge: 100,
+  tagline: 150,
+  site_description: 400,
+  footer_text: 150,
+};
+
+export const DEFAULT_HERO_BADGE = "In Collaboration with BUILDFEST KASHMIR";
+
+// The website text everything should show: the admin's override, or the default.
+export function branding(settings: SiteSettings) {
+  const name = settings.site_name ?? eventConfig.name;
+  return {
+    name,
+    title: settings.site_title ?? `${name} — Registration`,
+    badge: settings.hero_badge ?? DEFAULT_HERO_BADGE,
+    tagline: settings.tagline ?? eventConfig.tagline,
+    description: settings.site_description ?? eventConfig.description,
+    // null means the standard "© year name." line.
+    footer: settings.footer_text,
+  };
+}
+
+const limitedText = (max: number) =>
+  z
+    .string()
+    .transform((v) => v.trim())
+    .pipe(z.string().max(max, `Use at most ${max} characters.`));
+
 // The team size everything should show and use.
 export function teamSize(settings: { team_max_members: number | null }): number {
   return settings.team_max_members ?? eventConfig.team.maxMembers;
@@ -269,6 +323,12 @@ export const settingsChangeSchema = z
     event_venue: z.union([eventTextSchema, z.null()]),
     event_registration_deadline: z.union([eventTextSchema, z.null()]),
     event_venue_map_url: z.union([mapUrlSchema, z.null()]),
+    site_name: z.union([limitedText(BRANDING_LIMITS.site_name), z.null()]),
+    site_title: z.union([limitedText(BRANDING_LIMITS.site_title), z.null()]),
+    hero_badge: z.union([limitedText(BRANDING_LIMITS.hero_badge), z.null()]),
+    tagline: z.union([limitedText(BRANDING_LIMITS.tagline), z.null()]),
+    site_description: z.union([limitedText(BRANDING_LIMITS.site_description), z.null()]),
+    footer_text: z.union([limitedText(BRANDING_LIMITS.footer_text), z.null()]),
     announcement: z.union([announcementSchema, z.null()]),
   })
   .partial()

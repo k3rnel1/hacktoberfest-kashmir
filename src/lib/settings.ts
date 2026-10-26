@@ -3,6 +3,7 @@ import { cache } from "react";
 import { fail, type ActionResult } from "@/lib/action";
 import { createAdminClient } from "@/lib/supabase/admin";
 import {
+  BRANDING_KEYS,
   DEFAULT_SETTINGS,
   EVENT_DETAIL_KEYS,
   LOCK_ALL_KEYS,
@@ -22,7 +23,7 @@ export const getStoredSettings = cache(async (): Promise<SiteSettings> => {
     const { data, error } = await createAdminClient()
       .from("site_settings")
       .select(
-        [...SETTING_KEYS, "announcement", "lockdown", "registrations_close_at", "lockdown_at", "team_max_members", ...EVENT_DETAIL_KEYS].join(", "),
+        [...SETTING_KEYS, "announcement", "lockdown", "registrations_close_at", "lockdown_at", "team_max_members", ...BRANDING_KEYS, ...EVENT_DETAIL_KEYS].join(", "),
       )
       .eq("id", true)
       .maybeSingle();

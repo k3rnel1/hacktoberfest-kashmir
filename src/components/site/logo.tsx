@@ -1,7 +1,10 @@
 import Link from "next/link";
-import { eventConfig } from "@/config/event";
+import { branding } from "@/lib/site-settings";
+import { getSettings } from "@/lib/settings";
 
-export function Logo({ href = "/" }: { href?: string }) {
+export async function Logo({ href = "/" }: { href?: string }) {
+  const { name } = branding(await getSettings());
+  const words = name.split(" ");
   return (
     <Link href={href} className="flex items-center gap-2 font-mono text-sm font-semibold">
       <span
@@ -11,9 +14,13 @@ export function Logo({ href = "/" }: { href?: string }) {
         {">_"}
       </span>
       <span>
-        {eventConfig.name.split(" ")[0].toLowerCase()}
-        <span className="text-primary">/</span>
-        {eventConfig.name.split(" ")[1]?.toLowerCase()}
+        {words[0].toLowerCase()}
+        {words.length > 1 && (
+          <>
+            <span className="text-primary">/</span>
+            {words.slice(1).join(" ").toLowerCase()}
+          </>
+        )}
       </span>
     </Link>
   );

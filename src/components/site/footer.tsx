@@ -1,4 +1,6 @@
 import { eventConfig } from "@/config/event";
+import { getSettings } from "@/lib/settings";
+import { branding } from "@/lib/site-settings";
 
 const SOCIAL_LABELS = {
   github: "GitHub",
@@ -6,7 +8,8 @@ const SOCIAL_LABELS = {
   linkedin: "LinkedIn",
 } as const;
 
-export function Footer() {
+export async function Footer() {
+  const brand = branding(await getSettings());
   // Only socials with a URL set in event.ts are shown.
   const socials: { key: string; label: string; url: string }[] = [];
   for (const key of Object.keys(SOCIAL_LABELS) as (keyof typeof SOCIAL_LABELS)[]) {
@@ -18,7 +21,7 @@ export function Footer() {
     <footer className="mt-auto border-t border-border">
       <div className="mx-auto flex max-w-6xl flex-col gap-2 px-4 py-6 text-sm text-muted sm:flex-row sm:items-center sm:justify-between">
         <p>
-          © {new Date().getFullYear()} {eventConfig.name}.
+          {brand.footer ?? `© ${new Date().getFullYear()} ${brand.name}.`}
         </p>
         {socials.length > 0 && (
           <ul className="flex items-center gap-4" aria-label="Social links">

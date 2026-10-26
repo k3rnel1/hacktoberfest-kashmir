@@ -17,8 +17,10 @@ import { Input, Textarea } from "@/components/ui/input";
 import { GENERIC_ERROR } from "@/lib/action";
 import { eventConfig } from "@/config/event";
 import {
+  BRANDING_LIMITS,
   BROADCAST_AUDIENCES,
   SETTING_GROUPS,
+  branding,
   teamSize,
   type SettingKey,
   type SiteSettings,
@@ -572,17 +574,143 @@ export function SettingsControls({ settings }: { settings: SiteSettings }) {
         </Card>
       ))}
 
-      <EventDetails
-        key={EVENT_FIELDS.map((f) => settings[f.key] ?? "").join("|")}
-        settings={settings}
-      />
-
       <Announcement
         key={settings.announcement ?? ""}
         current={settings.announcement}
       />
 
       <SendNotification />
+    </div>
+  );
+}
+
+const BRANDING_FIELDS = [
+  {
+    key: "site_name",
+    label: "Event name",
+    hint: "Header, home page title, footer and browser tabs.",
+  },
+  {
+    key: "site_title",
+    label: "Browser tab title (home page)",
+    hint: "Defaults to the event name followed by Registration.",
+  },
+  {
+    key: "hero_badge",
+    label: "Badge above the home page title",
+    hint: "The small line that currently says In Collaboration with…",
+  },
+  {
+    key: "tagline",
+    label: "Tagline",
+    hint: "The line under the home page title.",
+  },
+  {
+    key: "site_description",
+    label: "Description",
+    hint: "The paragraph on the home page. Also used for search engines.",
+    long: true,
+  },
+  {
+    key: "footer_text",
+    label: "Footer line",
+    hint: "Replaces the copyright line, for example: © 2026 Your Name. Empty shows the standard line.",
+  },
+] as const;
+
+function BrandingCard({ settings }: { settings: SiteSettings }) {
+  const defaults = branding({
+    ...settings,
+    ...Object.fromEntries(BRANDING_FIELDS.map((f) => [f.key, null])),
+  });
+  const defaultFor: Record<string, string> = {
+    site_name: defaults.name,
+    site_title: defaults.title,
+    hero_badge: defaults.badge,
+    tagline: defaults.tagline,
+    site_description: defaults.description,
+    footer_text: `© ${new Date().getFullYear()} ${defaults.name}.`,
+  };
+  const [values, setValues] = useState<Record<string, string>>(() =>
+    Object.fromEntries(
+      BRANDING_FIELDS.map((f) => [f.key, settings[f.key] ?? ""]),
+    ),
+  );
+  const { save, pending } = useSave();
+  const dirty = BRANDING_FIELDS.some(
+    (f) => values[f.key].trim() !== (settings[f.key] ?? ""),
+  );
+
+  return (
+    <Card className="grid gap-4 p-5">
+      <div>
+        <h2 className="text-lg font-semibold">Website text</h2>
+        <p className="mt-1 text-sm text-muted">
+          Leave a field empty to use the default shown in grey.
+        </p>
+      </div>
+      {BRANDING_FIELDS.map((f) => (
+        <label key={f.key} className="grid gap-1 text-sm">
+          <span className="text-muted">{f.label}</span>
+          {"long" in f ? (
+            <Textarea
+              value={values[f.key]}
+              onChange={(e) =>
+                setValues((v) => ({ ...v, [f.key]: e.target.value }))
+              }
+              maxLength={BRANDING_LIMITS[f.key]}
+              rows={4}
+              placeholder={defaultFor[f.key]}
+              disabled={pending}
+            />
+          ) : (
+            <Input
+              value={values[f.key]}
+              onChange={(e) =>
+                setValues((v) => ({ ...v, [f.key]: e.target.value }))
+              }
+              maxLength={BRANDING_LIMITS[f.key]}
+              placeholder={defaultFor[f.key]}
+              disabled={pending}
+            />
+          )}
+          <span className="text-xs text-muted">{f.hint}</span>
+        </label>
+      ))}
+      <div>
+        <Button
+          size="sm"
+          loading={pending}
+          disabled={!dirty}
+          onClick={() =>
+            save(
+              Object.fromEntries(
+                BRANDING_FIELDS.map((f) => [
+                  f.key,
+                  values[f.key].trim() === "" ? null : values[f.key].trim(),
+                ]),
+              ),
+            )
+          }
+        >
+          Save website text
+        </Button>
+      </div>
+    </Card>
+  );
+}
+
+export function WebsiteSettings({ settings }: { settings: SiteSettings }) {
+  return (
+    <div className="grid gap-6">
+      <BrandingCard
+        key={BRANDING_FIELDS.map((f) => settings[f.key] ?? "").join("|")}
+        settings={settings}
+      />
+      <EventDetails
+        key={EVENT_FIELDS.map((f) => settings[f.key] ?? "").join("|")}
+        settings={settings}
+      />
     </div>
   );
 }
