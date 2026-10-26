@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { eventConfig } from "@/config/event";
 
 // Organizer controls. Shared by the admin Controls page (labels, grouping) and the
 // server (defaults, messages). The database enforces the same keys (see the
@@ -30,6 +31,9 @@ export type SiteSettings = Record<SettingKey, boolean> & {
   event_date: string | null;
   event_venue: string | null;
   event_registration_deadline: string | null;
+  event_venue_map_url: string | null;
+  // Team size limit set by the organizers. null means the default in src/config/event.ts.
+  team_max_members: number | null;
 };
 
 export const LOCKDOWN_MESSAGE =
@@ -55,6 +59,8 @@ export const DEFAULT_SETTINGS: SiteSettings = {
   event_date: null,
   event_venue: null,
   event_registration_deadline: null,
+  event_venue_map_url: null,
+  team_max_members: null,
 };
 
 // Shown to participants when they try something that is currently switched off.
@@ -203,11 +209,41 @@ export const broadcastSchema = z.object({
   audience: z.enum(["all", "selected", "leaders"]),
 });
 
-export const EVENT_DETAIL_KEYS = ["event_date", "event_venue", "event_registration_deadline"] as const;
+export const EVENT_DETAIL_KEYS = [
+  "event_date",
+  "event_venue",
+  "event_registration_deadline",
+  "event_venue_map_url",
+] as const;
 const eventTextSchema = z
   .string()
   .transform((v) => v.trim())
   .pipe(z.string().max(100, "Use at most 100 characters."));
+
+// A map link must be https; anything else (javascript:, http:, spaces) is rejected.
+const mapUrlSchema = z
+  .string()
+  .transform((v) => v.trim())
+  .pipe(
+    z
+      .string()
+      .max(500, "Use at most 500 characters.")
+      .refine((v) => v === "" || /^https:\/\/\S+$/.test(v), "Use a link that starts with https://"),
+  );
+
+// The team size everything should show and use.
+export function teamSize(settings: { team_max_members: number | null }): number {
+  return settings.team_max_members ?? eventConfig.team.maxMembers;
+}
+
+export const MIN_TEAM_SIZE = 2;
+export const MAX_TEAM_SIZE = 20;
+
+export const teamSizeSchema = z.coerce
+  .number({ message: "Enter a number." })
+  .int("Use a whole number.")
+  .min(MIN_TEAM_SIZE, `The smallest team size is ${MIN_TEAM_SIZE}.`)
+  .max(MAX_TEAM_SIZE, `The largest team size is ${MAX_TEAM_SIZE}.`);
 
 export const announcementSchema = z
   .string()
@@ -232,6 +268,7 @@ export const settingsChangeSchema = z
     event_date: z.union([eventTextSchema, z.null()]),
     event_venue: z.union([eventTextSchema, z.null()]),
     event_registration_deadline: z.union([eventTextSchema, z.null()]),
+    event_venue_map_url: z.union([mapUrlSchema, z.null()]),
     announcement: z.union([announcementSchema, z.null()]),
   })
   .partial()

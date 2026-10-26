@@ -22,7 +22,7 @@ export const getStoredSettings = cache(async (): Promise<SiteSettings> => {
     const { data, error } = await createAdminClient()
       .from("site_settings")
       .select(
-        [...SETTING_KEYS, "announcement", "lockdown", "registrations_close_at", "lockdown_at", ...EVENT_DETAIL_KEYS].join(", "),
+        [...SETTING_KEYS, "announcement", "lockdown", "registrations_close_at", "lockdown_at", "team_max_members", ...EVENT_DETAIL_KEYS].join(", "),
       )
       .eq("id", true)
       .maybeSingle();

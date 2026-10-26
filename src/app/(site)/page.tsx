@@ -15,8 +15,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { eventConfig, TBA } from "@/config/event";
 import { getSessionUser } from "@/lib/auth";
 import { getSettings } from "@/lib/settings";
+import { teamSize } from "@/lib/site-settings";
 
-const steps = [
+const getSteps = (size: number) => [
   {
     icon: UserPlus,
     title: "Create your account",
@@ -30,28 +31,39 @@ const steps = [
   {
     icon: Users,
     title: "Create or join a team",
-    body: "Start a team and become its leader, or join someone else's as a member.",
+    body: `Start a team and become its leader, or join someone else's as a member. Teams can have up to ${size} members.`,
   },
   {
     icon: UsersRound,
     title: "Await Selection Updates",
-    body: `Monitor the team page for updates in the selection status. ${eventConfig.team.maxMembers} `,
+    body: "Monitor the team page for updates in the selection status.",
   },
 ];
 
 export default async function HomePage() {
   const user = await getSessionUser();
   const settings = await getSettings();
+  const steps = getSteps(teamSize(settings));
 
-  const details = [
+  const details: {
+    icon: typeof CalendarDays;
+    label: string;
+    value: string | null | undefined;
+    mapUrl?: string | null;
+  }[] = [
     { icon: CalendarDays, label: "Date", value: settings.event_date ?? eventConfig.date },
-    { icon: MapPin, label: "Venue", value: settings.event_venue ?? eventConfig.venue },
+    {
+      icon: MapPin,
+      label: "Venue",
+      value: settings.event_venue ?? eventConfig.venue,
+      mapUrl: settings.event_venue_map_url,
+    },
     {
       icon: Timer,
       label: "Registration deadline",
       value: settings.event_registration_deadline ?? eventConfig.registrationDeadline,
     },
-    { icon: Users, label: "Team size", value: `Up to ${eventConfig.team.maxMembers} members` },
+    { icon: Users, label: "Team size", value: `Up to ${teamSize(settings)} members` },
   ];
 
   return (
@@ -98,11 +110,23 @@ export default async function HomePage() {
           # event details
         </h2>
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          {details.map(({ icon: Icon, label, value }) => (
+          {details.map(({ icon: Icon, label, value, mapUrl }) => (
             <Card key={label} className="p-4">
               <Icon className="mb-3 size-4 text-primary" aria-hidden />
               <p className="text-xs uppercase tracking-wide text-muted">{label}</p>
-              <p className="mt-1 font-medium">{value ?? TBA}</p>
+              <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1">
+                <p className="font-medium">{value ?? TBA}</p>
+                {mapUrl && (
+                  <a
+                    href={mapUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1 rounded-md border border-border px-2 py-0.5 text-xs font-medium text-primary hover:bg-surface-2"
+                  >
+                    <MapPin className="size-3" aria-hidden /> View map
+                  </a>
+                )}
+              </div>
             </Card>
           ))}
         </div>

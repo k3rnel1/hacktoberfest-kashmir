@@ -17,11 +17,11 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { eventConfig } from "@/config/event";
 import { requireCompleteProfile } from "@/lib/auth";
 import { getPendingCount } from "@/lib/matching";
 import { getUnreadNotificationCount } from "@/lib/notifications";
 import { getSettings } from "@/lib/settings";
+import { teamSize } from "@/lib/site-settings";
 import { LOCKDOWN_MESSAGE } from "@/lib/site-settings";
 import { getMyTeamId, getTeamDetail } from "@/lib/teams";
 
@@ -198,7 +198,7 @@ export default async function DashboardPage() {
                 <CardTitle className="mt-2">Create a team</CardTitle>
                 <CardDescription>
                   Start a team, become its leader, and invite up to{" "}
-                  {eventConfig.team.maxMembers - 1} friends with a private link.
+                  {teamSize(settings) - 1} friends with a private link.
                 </CardDescription>
               </CardHeader>
               <CardContent className="mt-auto">

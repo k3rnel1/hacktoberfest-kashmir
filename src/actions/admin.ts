@@ -7,7 +7,7 @@ import { getActionAdmin, isAdmin } from "@/lib/auth";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { finalistSchema } from "@/lib/finalist-schema";
 import { selectionLabel, selectionStatusSchema } from "@/lib/selection";
-import { broadcastSchema, settingsChangeSchema } from "@/lib/site-settings";
+import { broadcastSchema, settingsChangeSchema, teamSizeSchema } from "@/lib/site-settings";
 import { uuidSchema } from "@/lib/validation";
 
 // Every action re-verifies the caller is an administrator on the server. The UI
@@ -65,6 +65,37 @@ export async function adminBroadcastNotificationAction(input: unknown): Promise<
     ok: true,
     message: `Notification sent to ${count} ${count === 1 ? "participant" : "participants"}.`,
   };
+}
+
+// Changes the team size limit everywhere. The database refuses it while any team has more
+// members than the new limit, and tells us how many teams are in the way.
+export async function adminSetTeamSizeAction(size: unknown): Promise<ActionResult> {
+  const session = await getActionAdmin();
+  if (!session) return fail(SESSION_EXPIRED);
+
+  const parsed = teamSizeSchema.safeParse(size);
+  if (!parsed.success) return fail(parsed.error.issues[0]?.message ?? GENERIC_ERROR);
+
+  const { error } = await createAdminClient().rpc("admin_set_team_size", {
+    p_admin_id: session.user.id,
+    p_size: parsed.data,
+  });
+  if (error) {
+    if (error.message === "TEAMS_EXCEED_SIZE") {
+      const [count, largest] = (error.details ?? "").split(",").map(Number);
+      const teams = count === 1 ? "There is 1 team" : `There are ${count || "some"} teams`;
+      return fail(
+        `${teams} with more than ${parsed.data} members${
+          largest ? ` (the largest has ${largest})` : ""
+        }. Remove members or dissolve those teams first, or choose a larger size.`,
+      );
+    }
+    return fail(dbError(error.message));
+  }
+
+  // The size shows on the home page, dashboards, team pages and the create-team flow.
+  revalidatePath("/", "layout");
+  return { ok: true, message: `Team size is now ${parsed.data}.` };
 }
 
 export async function adminRemoveMemberAction(userId: string): Promise<ActionResult> {

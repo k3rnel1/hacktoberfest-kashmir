@@ -3,7 +3,6 @@
 import { randomUUID } from "node:crypto";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { eventConfig } from "@/config/event";
 import {
   dbError,
   fail,
@@ -13,7 +12,8 @@ import {
   TOO_MANY,
   type ActionResult,
 } from "@/lib/action";
-import { closedResult, lockdownResult } from "@/lib/settings";
+import { closedResult, getSettings, lockdownResult } from "@/lib/settings";
+import { teamSize } from "@/lib/site-settings";
 import { getActionUser } from "@/lib/auth";
 import { deriveInviteToken, hashInviteToken, inviteUrl } from "@/lib/invite";
 import { rateLimit } from "@/lib/rate-limit";
@@ -47,7 +47,7 @@ export async function createTeamAction(formData: FormData): Promise<ActionResult
     p_name: parsed.data.name,
     p_description: parsed.data.description,
     p_token_hash: hashInviteToken(token),
-    p_max_members: eventConfig.team.maxMembers,
+    p_max_members: teamSize(await getSettings()),
     p_expires_at: null,
   });
 

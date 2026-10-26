@@ -6,6 +6,7 @@ import { Lock, LockOpen } from "lucide-react";
 import { toast } from "sonner";
 import {
   adminBroadcastNotificationAction,
+  adminSetTeamSizeAction,
   adminUpdateSettingsAction,
 } from "@/actions/admin";
 import { ConfirmDialog } from "@/components/confirm-dialog";
@@ -18,12 +19,38 @@ import { eventConfig } from "@/config/event";
 import {
   BROADCAST_AUDIENCES,
   SETTING_GROUPS,
+  teamSize,
   type SettingKey,
   type SiteSettings,
 } from "@/lib/site-settings";
 import { cn } from "@/lib/utils";
 
 // Saves immediately and refreshes. Every change is recorded in the audit log.
+// Runs a server action and reports its result (used where the server may refuse the change).
+function useRun() {
+  const router = useRouter();
+  const [pending, startTransition] = useTransition();
+  function run(
+    action: () => Promise<{ ok: boolean; error?: string; message?: string }>,
+  ) {
+    startTransition(async () => {
+      try {
+        const result = await action();
+        if (!result.ok) {
+          toast.error(result.error ?? GENERIC_ERROR);
+          return;
+        }
+        if (result.message) toast.success(result.message);
+        router.refresh();
+      } catch (error) {
+        unstable_rethrow(error);
+        toast.error(GENERIC_ERROR);
+      }
+    });
+  }
+  return { pending, run };
+}
+
 function useSave() {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
@@ -242,6 +269,13 @@ const EVENT_FIELDS = [
     label: "Registration deadline",
     fallback: eventConfig.registrationDeadline,
   },
+  {
+    key: "event_venue_map_url",
+    label: "Venue map link",
+    fallback: "",
+    placeholder:
+      "https://maps.app.goo.gl/…  (adds a “View map” button next to the venue)",
+  },
 ] as const;
 
 function EventDetails({ settings }: { settings: SiteSettings }) {
@@ -272,11 +306,14 @@ function EventDetails({ settings }: { settings: SiteSettings }) {
               setValues((v) => ({ ...v, [f.key]: e.target.value }))
             }
             maxLength={100}
-            placeholder={`Default: ${f.fallback}`}
+            placeholder={
+              "placeholder" in f ? f.placeholder : `Default: ${f.fallback}`
+            }
             disabled={pending}
           />
         </label>
       ))}
+      <TeamSizeControl settings={settings} />
       <div>
         <Button
           size="sm"
@@ -297,6 +334,45 @@ function EventDetails({ settings }: { settings: SiteSettings }) {
         </Button>
       </div>
     </Card>
+  );
+}
+
+function TeamSizeControl({ settings }: { settings: SiteSettings }) {
+  const current = teamSize(settings);
+  const [value, setValue] = useState(String(current));
+  const { pending, run } = useRun();
+
+  return (
+    <div className="grid gap-1 text-sm">
+      <label htmlFor="team-size" className="text-muted">
+        Team size (maximum members per team)
+      </label>
+      <div className="flex flex-wrap gap-2">
+        <Input
+          id="team-size"
+          type="number"
+          min={2}
+          max={20}
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
+          disabled={pending}
+          className="w-28"
+        />
+        <Button
+          size="sm"
+          loading={pending}
+          disabled={value === String(current)}
+          onClick={() => run(() => adminSetTeamSizeAction(value))}
+        >
+          Save team size
+        </Button>
+      </div>
+      <p className="text-xs text-muted">
+        Applies to every team, new and existing, and everywhere the size is
+        shown. It cannot be set lower than the biggest existing team: you will
+        be told if some teams are in the way.
+      </p>
+    </div>
   );
 }
 
